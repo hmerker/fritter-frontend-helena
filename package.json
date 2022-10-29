@@ -10,11 +10,13 @@
         "dev": "nodemon api/index.ts -e js,ts,json"
     },
     "dependencies": {
+        "apos-to-lex-form": "^1.0.5",
         "connect-history-api-fallback": "^1.6.0",
         "connect-mongo": "^4.6.0",
         "cookie-parser": "~1.4.3",
         "debug": "~4.3.4",
         "dotenv": "^16.0.2",
+        "edit-distance": "^1.0.5",
         "express": "^4.18.1",
         "express-handlebars": "^6.0.6",
         "express-session": "^1.17.3",
@@ -22,6 +24,8 @@
         "mongoose": "^6.6.2",
         "morgan": "~1.10.0",
         "nanoid": "^3.3.4",
+        "natural": "^5.2.3",
+        "stopword": "^2.0.5",
         "vue": "^2.7.13",
         "vue-router": "^3.6.5",
         "vuex": "^3.6.2",
@@ -54,7 +58,9 @@
                 "files": [
                     "**/*.ts"
                 ],
-                "excludedFiles": ["client/**"],
+                "excludedFiles": [
+                    "client/**"
+                ],
                 "extends": [
                     "xo",
                     "xo-typescript/space",
