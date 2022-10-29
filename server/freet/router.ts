@@ -1,9 +1,12 @@
-import type {NextFunction, Request, Response} from 'express';
-import express from 'express';
-import FreetCollection from './collection';
-import * as userValidator from '../user/middleware';
-import * as freetValidator from '../freet/middleware';
-import * as util from './util';
+import type {NextFunction, Request, Response} from "express";
+import express from "express";
+import FreetCollection from "./collection";
+import * as userValidator from "../user/middleware";
+import * as freetValidator from "../freet/middleware";
+import * as util from "./util";
+import CommentCollection from "../comment/collection";
+import LikeCollection from "../like/collection";
+import ReportCollection from "../report/collection";
 
 const router = express.Router();
 
@@ -18,17 +21,17 @@ const router = express.Router();
 /**
  * Get freets by author.
  *
- * @name GET /api/freets?author=username
+ * @name GET /api/freets?authorId=id
  *
- * @return {FreetResponse[]} - An array of freets created by user with username, author
- * @throws {400} - If author is not given
- * @throws {404} - If no user has given author
+ * @return {FreetResponse[]} - An array of freets created by user with id, authorId
+ * @throws {400} - If authorId is not given
+ * @throws {404} - If no user has given authorId
  *
  */
 router.get(
-  '/',
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
-    // Check if author query parameter was supplied
+    // Check if authorId query parameter was supplied
     if (req.query.author !== undefined) {
       next();
       return;
@@ -38,13 +41,33 @@ router.get(
     const response = allFreets.map(util.constructFreetResponse);
     res.status(200).json(response);
   },
-  [
-    userValidator.isAuthorExists
-  ],
+  [userValidator.isAuthorExists],
   async (req: Request, res: Response) => {
-    const authorFreets = await FreetCollection.findAllByUsername(req.query.author as string);
+    const authorFreets = await FreetCollection.findAllByUsername(
+      req.query.author as string
+    );
     const response = authorFreets.map(util.constructFreetResponse);
     res.status(200).json(response);
+  }
+);
+
+/**
+  * Get freets of users followed to populate user's feed
+  *
+  * @name GET /api/freets/feed
+  *
+  * @return {FreetResponse[]} - An array of freets created by user with id, authorId
+  * @throws {403} - If user is not logged in
+  *
+  */
+router.get(
+  "/feed",
+  [userValidator.isUserLoggedIn],
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req.session.userId as string) ?? "";
+    const freetList = await FreetCollection.getFreetsForFeed(userId, "$in");
+    const response = freetList.map(util.constructFreetResponse);
+    return res.status(200).json(response);
   }
 );
 
@@ -60,18 +83,20 @@ router.get(
  * @throws {413} - If the freet content is more than 140 characters long
  */
 router.post(
-  '/',
-  [
-    userValidator.isUserLoggedIn,
-    freetValidator.isValidFreetContent
-  ],
+  "/",
+  [userValidator.isUserLoggedIn, freetValidator.isValidFreetContent],
   async (req: Request, res: Response) => {
-    const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const freet = await FreetCollection.addOne(userId, req.body.content);
+    const userId = (req.session.userId as string) ?? ""; // Will not be an empty string since its validated in isUserLoggedIn
+    const sourceRaw = req.body.source;
+    let source = "none";
+    if (sourceRaw !== null && sourceRaw !== ""){
+      source = sourceRaw;
+    }
+    const freet = await FreetCollection.addOne(userId, req.body.content, source);
 
     res.status(201).json({
-      message: 'Your freet was created successfully.',
-      freet: util.constructFreetResponse(freet)
+      message: "Your freet was created successfully.",
+      freet: util.constructFreetResponse(freet),
     });
   }
 );
@@ -87,16 +112,20 @@ router.post(
  * @throws {404} - If the freetId is not valid
  */
 router.delete(
-  '/:freetId?',
+  "/:freetId?",
   [
     userValidator.isUserLoggedIn,
     freetValidator.isFreetExists,
-    freetValidator.isValidFreetModifier
+    freetValidator.isValidFreetModifier,
   ],
   async (req: Request, res: Response) => {
     await FreetCollection.deleteOne(req.params.freetId);
+    const {freetId} = req.params;
+    await CommentCollection.deleteMany({parentContentId: freetId});
+    await LikeCollection.deleteMany({parentContentId: freetId});
+    await ReportCollection.deleteMany({parentContentId: freetId});
     res.status(200).json({
-      message: 'Your freet was deleted successfully.'
+      message: "Your freet was deleted successfully.",
     });
   }
 );
@@ -104,7 +133,7 @@ router.delete(
 /**
  * Modify a freet
  *
- * @name PATCH /api/freets/:id
+ * @name PUT /api/freets/:id
  *
  * @param {string} content - the new content for the freet
  * @return {FreetResponse} - the updated freet
@@ -114,19 +143,25 @@ router.delete(
  * @throws {400} - If the freet content is empty or a stream of empty spaces
  * @throws {413} - If the freet content is more than 140 characters long
  */
-router.patch(
-  '/:freetId?',
+router.put(
+  "/:freetId?",
   [
     userValidator.isUserLoggedIn,
     freetValidator.isFreetExists,
     freetValidator.isValidFreetModifier,
-    freetValidator.isValidFreetContent
+    freetValidator.isValidFreetContent,
+    freetValidator.isValidFreetEdit,
   ],
   async (req: Request, res: Response) => {
-    const freet = await FreetCollection.updateOne(req.params.freetId, req.body.content);
+    const sourceRaw = req.body.source;
+    let source = "none";
+    if (sourceRaw !== null && sourceRaw !== ""){
+      source = sourceRaw;
+    }
+    const freet = await FreetCollection.updateOne(req.params.freetId, req.body.content, source);
     res.status(200).json({
-      message: 'Your freet was updated successfully.',
-      freet: util.constructFreetResponse(freet)
+      message: "Your freet was updated successfully.",
+      freet: util.constructFreetResponse(freet),
     });
   }
 );

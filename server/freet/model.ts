@@ -1,6 +1,6 @@
-import type {Types} from 'mongoose';
-import {Schema, model} from 'mongoose';
-import type {User} from '../user/model';
+import type {Types, PopulatedDoc, Document} from "mongoose";
+import {Schema, model} from "mongoose";
+import type {User} from "../user/model";
 
 /**
  * This file defines the properties stored in a Freet
@@ -14,6 +14,11 @@ export type Freet = {
   dateCreated: Date;
   content: string;
   dateModified: Date;
+  comments: number;
+  likes: number;
+  reports: number;
+  source: string;
+  numCharsChanged: number;
 };
 
 export type PopulatedFreet = {
@@ -22,6 +27,11 @@ export type PopulatedFreet = {
   dateCreated: Date;
   content: string;
   dateModified: Date;
+  comments: number;
+  likes: number;
+  reports: number;
+  source: string;
+  numCharsChanged: number;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -33,24 +43,44 @@ const FreetSchema = new Schema<Freet>({
     // Use Types.ObjectId outside of the schema
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'User'
+    ref: "User",
   },
   // The date the freet was created
   dateCreated: {
     type: Date,
-    required: true
+    required: true,
   },
   // The content of the freet
   content: {
     type: String,
-    required: true
+    required: true,
   },
   // The date the freet was modified
   dateModified: {
     type: Date,
-    required: true
-  }
+    required: true,
+  },
+  comments: {
+    type: Number,
+    required: true,
+  },
+  likes: {
+    type: Number,
+    required: true,
+  },
+  reports: {
+    type: Number,
+    required: true,
+  },
+  source: {
+    type: String,
+    required: true,
+  },
+  numCharsChanged: {
+    type: Number,
+    required: true,
+  },
 });
 
-const FreetModel = model<Freet>('Freet', FreetSchema);
+const FreetModel = model<Freet>("Freet", FreetSchema);
 export default FreetModel;
