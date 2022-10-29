@@ -13,9 +13,12 @@ class FreetCollection {
    * @param freetId - id of the freet
    * @returns the freet if it exists; null otherwise
    */
-  static async findById(
-    freetId: Types.ObjectId | string): Promise<HydratedDocument<Freet>> {
-    return await FreetModel.findById(freetId);
+  static async findById(freetId: Types.ObjectId | string): Promise<HydratedDocument<Freet>> {
+    const freetFound = await FreetModel.findById(freetId);
+    if (freetFound) {
+      return freetFound.populate("authorId");
+    }
+    return freetFound;
   }
 
   /**
@@ -25,12 +28,17 @@ class FreetCollection {
     * @param mongoFollowerFilter - include or exlcude users followed
     * @returns list of freets
     */
-   static async getFreetsForFeed(userId: Types.ObjectId | string, mongoFollowerFilter: "$in" | "$nin"
+   static async getFreetsForFeed(userId: Types.ObjectId | string, mongoFollowerFilter: "$in" | "$nin", authorId?: string
   ): Promise<Array<HydratedDocument<Freet>>> {
     const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
     const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
+    usersFollowed.push(userId as Types.ObjectId);
     mongoFollowerFilter === "$nin" && usersFollowed.push(userId as Types.ObjectId);
-    return await FreetModel.find({authorId: {[mongoFollowerFilter]: usersFollowed}}).populate("authorId");
+    const freetsToReturn = await FreetModel.find({authorId: { [mongoFollowerFilter]: usersFollowed}}).populate("authorId");
+    if (authorId) {
+      return freetsToReturn.filter((freetToReturn) => freetToReturn.authorId._id.toString() === authorId);
+    }
+    return freetsToReturn;
   }
   
   /**

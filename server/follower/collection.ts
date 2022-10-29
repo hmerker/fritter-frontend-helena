@@ -4,7 +4,7 @@ import FollowerModel from "./model";
 
 type FollowCounts = {
   followers: number;
-  usersFollowed: number;
+  following: number;
 };
 
 class FollowerCollection {
@@ -30,9 +30,9 @@ class FollowerCollection {
    */
   static async getFollowCounts(userId: Types.ObjectId | string
   ): Promise<FollowCounts> {
-    const followers = await FollowerModel.find({follower: userId}).count();
-    const usersFollowed = await FollowerModel.find({userFollowed: userId}).count();
-    return {followers, usersFollowed};
+    const count_user_is_follower = await FollowerModel.find({follower: userId}).count();
+    const count_user_is_followed = await FollowerModel.find({userFollowed: userId}).count();
+    return {following: count_user_is_follower, followers: count_user_is_followed};
   }
 
   /**

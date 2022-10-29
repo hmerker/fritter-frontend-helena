@@ -32,7 +32,7 @@ router.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     // Check if authorId query parameter was supplied
-    if (req.query.author !== undefined) {
+    if (req.query.author || req.query.freetId) {
       next();
       return;
     }
@@ -40,6 +40,17 @@ router.get(
     const allFreets = await FreetCollection.findAll();
     const response = allFreets.map(util.constructFreetResponse);
     res.status(200).json(response);
+  },
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (req.query.authorId) {
+      next();
+      return;
+    }
+    const freetFound = await FreetCollection.findById(req.query.freetId as string);
+    if (!freetFound) {
+      return res.status(404).json({message: "Cannot find the freet."});
+    }
+    return res.status(200).json(util.constructFreetResponse(freetFound));
   },
   [userValidator.isAuthorExists],
   async (req: Request, res: Response) => {
@@ -54,7 +65,7 @@ router.get(
 /**
   * Get freets of users followed to populate user's feed
   *
-  * @name GET /api/freets/feed
+  * @name GET /api/freets/feed?authorId=id
   *
   * @return {FreetResponse[]} - An array of freets created by user with id, authorId
   * @throws {403} - If user is not logged in
@@ -65,7 +76,7 @@ router.get(
   [userValidator.isUserLoggedIn],
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req.session.userId as string) ?? "";
-    const freetList = await FreetCollection.getFreetsForFeed(userId, "$in");
+    const freetList = await FreetCollection.getFreetsForFeed(userId, "$in", req.query.authorId ? (req.query.authorId as string) : null);
     const response = freetList.map(util.constructFreetResponse);
     return res.status(200).json(response);
   }
