@@ -11,7 +11,11 @@ class SharedFreetCollection {
    * @returns the shared freet if it exists; null otherwise
    */
   static async findById(sharedFreetId: Types.ObjectId | string): Promise<HydratedDocument<SharedFreet>> {
-    return await SharedFreetModel.findById(sharedFreetId);
+    const sharedFreetFound = await SharedFreetModel.findById(sharedFreetId);
+    if (sharedFreetFound) {
+      return sharedFreetFound.populate("authorId");
+    }
+    return sharedFreetFound;
   }
   
   /**

@@ -34,7 +34,7 @@ router.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     // Check if authorId query parameter was supplied
-    if (req.query.author !== undefined) {
+    if (req.query.author || req.query.sharedFreetId) {
       next();
       return;
     }
@@ -42,6 +42,17 @@ router.get(
     const allFreets = await SharedFreetCollection.findAll();
     const response = allFreets.map(util.constructSharedFreetResponse);
     res.status(200).json(response);
+  },
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (req.query.authorId) {
+      next();
+      return;
+    }
+    const freetFound = await SharedFreetCollection.findById(req.query.sharedFreetId as string);
+    if (!freetFound) {
+      return res.status(404).json({message: "Cannot find the shared freet."});
+    }
+    return res.status(200).json(util.constructSharedFreetResponse(freetFound));
   },
   [userValidator.isAuthorExists],
   async (req: Request, res: Response) => {
