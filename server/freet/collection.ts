@@ -32,9 +32,7 @@ class FreetCollection {
   ): Promise<Array<HydratedDocument<Freet>>> {
     const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
     const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
-    usersFollowed.push(userId as Types.ObjectId);
-    mongoFollowerFilter === "$nin" && usersFollowed.push(userId as Types.ObjectId);
-    const freetsToReturn = await FreetModel.find({authorId: { [mongoFollowerFilter]: usersFollowed}}).populate("authorId");
+    const freetsToReturn = await FreetModel.find({authorId: {[mongoFollowerFilter]: usersFollowed}}).sort({datePosted: "desc"}).populate("authorId");
     if (authorId) {
       return freetsToReturn.filter((freetToReturn) => freetToReturn.authorId._id.toString() === authorId);
     }
@@ -79,7 +77,7 @@ class FreetCollection {
    */
   static async findAll(): Promise<Array<HydratedDocument<Freet>>> {
     // Retrieves freets and sorts them from most to least recent
-    return FreetModel.find({}).sort({ dateModified: -1 }).populate("authorId");
+    return FreetModel.find({}).sort({dateModified: -1}).populate("authorId");
   }
 
   /**
@@ -90,7 +88,7 @@ class FreetCollection {
    */
   static async findAllByUsername(username: string): Promise<Array<HydratedDocument<Freet>>> {
     const author = await UserCollection.findOneByUsername(username);
-    return FreetModel.find({authorId: author._id}).populate("authorId");
+    return FreetModel.find({authorId: author._id}).sort({dateModified: -1}).populate('authorId');
   }
 
   /**

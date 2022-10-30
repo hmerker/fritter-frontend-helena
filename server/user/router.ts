@@ -95,6 +95,22 @@ router.delete(
 );
 
 /**
+ * Get a user
+ */
+router.get(
+  "/",
+  [userValidator.isParamsGiven()],
+  async (req: Request, res: Response) => {
+    const {requestedUsername} = req.query;
+    const userToFind = await UserCollection.findOneByUsername(requestedUsername as string);
+    if (!userToFind) {
+      return res.status(404).json({ error: "The user you are searching for cannot be found." });
+    }
+    res.status(200).json({user: util.constructUserResponse(userToFind)});
+  }
+);
+
+/**
  * Create a user account.
  *
  * @name POST /api/users
@@ -133,7 +149,7 @@ router.post(
 /**
  * Update a user's profile.
  *
- * @name PUT /api/users
+ * @name PATCH /api/users
  *
  * @param {string} username - The user's new username
  * @param {string} password - The user's new password
@@ -142,7 +158,7 @@ router.post(
  * @throws {409} - If username already taken
  * @throws {400} - If username or password are not of the correct format
  */
-router.put(
+router.patch(
   "/",
   [
     userValidator.isUserLoggedIn,
