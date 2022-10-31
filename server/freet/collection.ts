@@ -32,7 +32,7 @@ class FreetCollection {
   ): Promise<Array<HydratedDocument<Freet>>> {
     const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
     const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
-    const freetsToReturn = await FreetModel.find({authorId: {[mongoFollowerFilter]: usersFollowed}}).sort({datePosted: "desc"}).populate("authorId");
+    const freetsToReturn = await FreetModel.find({authorId: {[mongoFollowerFilter]: usersFollowed}}).sort({dateCreated: "desc"}).populate("authorId");
     if (authorId) {
       return freetsToReturn.filter((freetToReturn) => freetToReturn.authorId._id.toString() === authorId);
     }

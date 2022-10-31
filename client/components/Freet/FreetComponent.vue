@@ -52,6 +52,9 @@
       Posted at {{ freet.dateModified }}
       <i v-if="freet.edited">(edited)</i>
     </p>
+    <router-link :to="`/freet?id=${freet._id}`">
+      View All Comments
+    </router-link>
     <section class="alerts">
       <article
         v-for="(status, alert, index) in alerts"
@@ -72,7 +75,7 @@ export default {
     freet: {
       type: Object,
       required: true
-    }
+    },
   },
   data() {
     return {
