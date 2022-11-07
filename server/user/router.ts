@@ -98,10 +98,10 @@ router.delete(
  * Get a user
  */
 router.get(
-  "/",
+  "/:username?",
   [userValidator.isParamsGiven()],
   async (req: Request, res: Response) => {
-    const {requestedUsername} = req.query;
+    const requestedUsername = req.query.username as string;
     const userToFind = await UserCollection.findOneByUsername(requestedUsername as string);
     if (!userToFind) {
       return res.status(404).json({ error: "The user you are searching for cannot be found." });

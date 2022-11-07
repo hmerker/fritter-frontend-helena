@@ -69,13 +69,18 @@ export default {
         credentials: "same-origin", // Sends express-session credentials with request
       };
       if (this.hasBody) {
-        options.body = JSON.stringify(Object.fromEntries(
-          this.fields.map(field => {
-            const {id, value} = field;
-            field.value = '';
-            return [id, value];
-          })
-        ));
+
+        let objects = Object.fromEntries(this.fields.map(field => {
+          const {id, value} = field;
+          field.value = '';
+          return [id, value];
+        }));
+
+        if (this.defaultBody !== undefined){
+          objects = {...this.defaultBody, ...objects}
+        }
+
+        options.body = JSON.stringify(objects);
       }
 
       try {
@@ -95,6 +100,7 @@ export default {
         }
         if (this.callback) {
           this.callback();
+          //this.callback(await r.json());
         }
       } 
       catch (e) {
