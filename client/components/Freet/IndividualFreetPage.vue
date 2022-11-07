@@ -54,6 +54,7 @@ export default {
     fetch(`/api/freets?freetId=${id}`, { method: "GET" }).then(res => res.json()).then((res) => {
       if (res){
         this.freet = res;
+        this.$store.state.filter = res._id;
       }
       res && fetch(`/api/comments?parentContentId=${id}`, { method: "GET" }).then(res => res.json()).then((res) => {
         if (res){
@@ -74,6 +75,7 @@ export default {
         if (res.ok) {
           this.comments = this.comments.filter((comment) => comment._id !== commentId);
           this.freet.comments = this.freet.comments - 1;
+          this.$store.commit('refreshComments');
         }
       });
     },

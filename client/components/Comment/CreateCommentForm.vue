@@ -16,12 +16,15 @@ export default {
   },
   data() {
     return {
-      url: "/api/comments", method: "POST", hasBody: true,
+      url: "/api/comments", 
+      method: "POST", 
+      hasBody: true,
       defaultBody: {parentContentId: this.freetId, parentContentType: "freet"},
       fields: [{id: "content", label: "Content", value: ""}],
       title: "Write a new comment",
+      refreshComments: true,
       callback: (comment) => {
-        this.createCommentCallback(comment.comment);
+        this.createCommentCallback(comment);
         this.$set(this.alerts, "Comment was successfully created.", "success");
         setTimeout(() => this.$delete(this.alerts, "Comment was successfully created."), 3000);
       },

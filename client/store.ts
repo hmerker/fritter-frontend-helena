@@ -13,6 +13,7 @@ const store = new Vuex.Store({
     freets: [], // all freets
     freetsForFeed: [], // freets for feed
     freetsForExplore: [], // freets for explore (other freets)
+    comments: [],
     username: null, // Username of the logged in user
     userId: null, // User id of the logged in user
     alerts: {}, // global success/error messages encountered during submissions to non-visible forms
@@ -58,13 +59,18 @@ const store = new Vuex.Store({
       state.freets = res;
       
       const url_feed = state.filter ? `/api/freets?author=${state.filter}` : '/api/freets/feed';
-      const res_feed = await fetch(url).then(async r => r.json());
+      const res_feed = await fetch(url_feed).then(async r => r.json());
       state.freetsForFeed = res_feed;
       
       const url_explore = '/api/freets/explore';
-      const res_explore = await fetch(url).then(async r => r.json());
+      const res_explore = await fetch(url_explore).then(async r => r.json());
       state.freetsForExplore = res_explore;
     },
+    async refreshComments(state){
+      const url = state.filter ? `/api/comments?parentContentId=${state.filter}` : null;
+      const res = await fetch(url).then(async r => r.json());
+      state.comments = res;
+    }
   },
   // Store data across page refreshes, only discard on browser close
   plugins: [createPersistedState()]
