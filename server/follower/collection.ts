@@ -60,6 +60,19 @@ class FollowerCollection {
   }
 
   /**
+   * Check if the current user is already a follower of the user being followed
+   *
+   * @param {string} follower - follower id
+   * @param {string} userFollowed - user being followed id
+   *
+   * @return {Promise<boolean>}
+   */
+   static async checkIfAlreadyFollows(follower: Types.ObjectId | string, userFollowed: Types.ObjectId | string
+  ): Promise<boolean> {
+    return (await FollowerModel.findOne({follower, userFollowed})) !== null;
+  }
+
+  /**
    * Delete follower
    *
    * @param {string} userFollowed - id of user being followed

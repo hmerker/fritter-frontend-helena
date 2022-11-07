@@ -25,42 +25,46 @@ router.get(
 );
 
 /**
- * Create report
+ * Create/delete a report
  *
  * @name POST /api/report
  */
 router.post(
   "/",
   [
-    userValidator.isUserLoggedIn, reportValidator.isParamsGiven("body"), reportValidator.isParamsIdValid("body"),
-    reportValidator.doesDuplicateReportExist(), reportValidator.isValidContent,
+    userValidator.isUserLoggedIn, reportValidator.isParamsGiven("body"), reportValidator.isParamsIdValid("body"), reportValidator.isValidContent,
     reportValidator.isParentContentTypeValid(), reportValidator.doesParentContentExist("body"),
 
   ],
   async (req: Request, res: Response) => {
     const userId = req.session.userId as string;
     const {parentContentId, parentContentType, content} = req.body;
-    const newReport = await ReportCollection.addOne(userId, parentContentId, parentContentType, content);
-    res.status(201).json({message: "You reported the content successfully.", newReport});
-  }
-);
 
-/**
- * Delete report
- *
- * @name DELETE /api/reports/:id
- */
-router.delete(
-  "/:parentContentId?",
-  [
-    userValidator.isUserLoggedIn, reportValidator.isParamsGiven("params"),
-    reportValidator.isParamsIdValid("body"),
-  ],
-  async (req: Request, res: Response) => {
-    const userId = req.session.userId as string;
-    const parentContentId = req.params.parentContentId;
-    await ReportCollection.deleteOne(userId, parentContentId);
-    res.status(200).json({message: "Your report was deleted successfully."});
+    const doesReportExist = await ReportCollection.findByUserId(userId, parentContentId as string);
+
+    let numToChange = 0;
+    if (doesReportExist){
+      numToChange = -1;
+    }
+    else{
+      numToChange = 1;
+    }
+
+    let reportResult = null;
+    if (doesReportExist){
+      reportResult = await ReportCollection.deleteOne(userId, parentContentId as string);
+    }
+    else{
+      reportResult = await ReportCollection.addOne(userId, parentContentId, parentContentType, content);
+    }
+
+    if (reportResult) {
+      return res.status(201).json({message: "You reported the content successfully.", countChange: numToChange});
+    }
+    res.status(404).json({
+      message: "You cannot report this content.",
+    });
+
   }
 );
 

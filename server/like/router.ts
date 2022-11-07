@@ -24,40 +24,44 @@ router.get(
 );
 
 /**
- * Create like
+ * Create/delete a like
  *
  * @name POST /api/likes
  */
 router.post(
   "/",
   [
-    userValidator.isUserLoggedIn, likeValidator.isParamsGiven("body"),
-    likeValidator.isParamsIdValid("body"), likeValidator.doesDuplicateLikeExist(), 
+    userValidator.isUserLoggedIn, likeValidator.isParamsGiven("body"), likeValidator.isParamsIdValid("body"),
     likeValidator.isParentContentTypeValid(), likeValidator.doesParentContentExist("body"),
   ],
   async (req: Request, res: Response) => {
     const userId = req.session.userId as string;
     const {parentContentId, parentContentType} = req.body;
-    const newLike = await LikeCollection.addOne(userId, parentContentId, parentContentType);
-    res.status(201).json({message: "You liked the content successfully.", newLike});
-  }
-);
 
-/**
- * Delete like
- *
- * @name DELETE /api/likes/:id
- */
-router.delete(
-  "/:parentContentId?",
-  [
-    userValidator.isUserLoggedIn, likeValidator.isParamsGiven("params"), likeValidator.isParamsIdValid("params"),
-  ],
-  async (req: Request, res: Response) => {
-    const userId = req.session.userId as string;
-    const parentContentId = req.params.parentContentId;
-    await LikeCollection.deleteOne(userId, parentContentId);
-    res.status(200).json({message: "Your like was deleted successfully.",});
+    const doesLikeExist = await LikeCollection.findByUserId(userId, parentContentId as string);
+
+    let numToChange = 0;
+    if (doesLikeExist){
+      numToChange = -1;
+    }
+    else{
+      numToChange = 1;
+    }
+
+    let likeResult = null;
+    if (doesLikeExist){
+      likeResult = await LikeCollection.deleteOne(userId, parentContentId as string);
+    }
+    else{
+      likeResult = await LikeCollection.addOne(userId, parentContentId, parentContentType);
+    }
+
+    if (likeResult) {
+      return res.status(201).json({message: "You liked the content successfully.", countChange: numToChange});
+    }
+    res.status(404).json({
+      message: "You cannot like this content.",
+    });
   }
 );
 

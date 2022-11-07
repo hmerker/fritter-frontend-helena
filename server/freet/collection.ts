@@ -25,14 +25,30 @@ class FreetCollection {
     * Get freets for user's feed
     *
     * @param userId - user id
-    * @param mongoFollowerFilter - include or exlcude users followed
     * @returns list of freets
     */
-   static async getFreetsForFeed(userId: Types.ObjectId | string, mongoFollowerFilter: "$in" | "$nin", authorId?: string
+   static async getFreetsForFeed(userId: Types.ObjectId | string, authorId?: string
   ): Promise<Array<HydratedDocument<Freet>>> {
     const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
     const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
-    const freetsToReturn = await FreetModel.find({authorId: {[mongoFollowerFilter]: usersFollowed}}).sort({dateCreated: "desc"}).populate("authorId");
+    const freetsToReturn = await FreetModel.find({authorId: {["$in"]: usersFollowed}}).sort({dateCreated: "desc"}).populate("authorId");
+    if (authorId) {
+      return freetsToReturn.filter((freetToReturn) => freetToReturn.authorId._id.toString() === authorId);
+    }
+    return freetsToReturn;
+  }
+
+  /**
+    * Get freets for user's explore page
+    *
+    * @param userId - user id
+    * @returns list of freets
+    */
+   static async getFreetsForExplore(userId: Types.ObjectId | string, authorId?: string
+  ): Promise<Array<HydratedDocument<Freet>>> {
+    const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
+    const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
+    const freetsToReturn = await FreetModel.find({authorId: {["$nin"]: usersFollowed}}).sort({dateCreated: "desc"}).populate("authorId");
     if (authorId) {
       return freetsToReturn.filter((freetToReturn) => freetToReturn.authorId._id.toString() === authorId);
     }

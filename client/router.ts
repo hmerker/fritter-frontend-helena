@@ -1,19 +1,27 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import FreetsPage from './components/Freet/FreetsPage.vue';
-import AccountPage from './components/Account/AccountPage.vue';
-import LoginPage from './components/Login/LoginPage.vue';
-import NotFound from './NotFound.vue';
-import FreetPage from "./components/Freet/FreetPage.vue";
+import Vue from "vue";
+import VueRouter from "vue-router";
+import FreetsPage from "./components/Freet/FreetsPage.vue";
+import HomePage from "./components/Home/HomePage.vue";
+import ExplorePage from "./components/Freet/ExplorePage.vue";
+import AccountPage from "./components/Account/AccountPage.vue";
+import LoginPage from "./components/Login/LoginPage.vue";
+import CreateAccount from "./components/Login/CreateAccount.vue";
+import IndividualFreetPage from "./components/Freet/IndividualFreetPage.vue";
+import ProfilePage from "./components/Account/ProfilePage.vue";
+import NotFound from "./NotFound.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
-  {path: '/', name: 'Home', component: FreetsPage}, //this is all the freets
-  {path: '/account', name: 'Account', component: AccountPage},
-  {path: '/login', name: 'Login', component: LoginPage},
-  {path: '*', name: 'Not Found', component: NotFound},
-  {path: "/freet", name: "Freet", component: FreetPage }, //this is an individual freet
+  {path: "/", name: "Home", component: HomePage},
+  {path: "/feed", name: "Feed", component: FreetsPage},
+  {path: "/account", name: "Account", component: AccountPage},
+  {path: "/login", name: "Login", component: LoginPage},
+  {path: "/create", name: "Create", component: CreateAccount},
+  {path: "/explore", name: "Explore", component: ExplorePage},
+  {path: "/freet", name: "IndividualFreet", component: IndividualFreetPage},
+  {path: "/user", name: "Profile", component: ProfilePage},
+  {path: "*", name: "Not Found", component: NotFound},
 ];
 
 const router = new VueRouter({routes});
@@ -23,14 +31,11 @@ const router = new VueRouter({routes});
  */
 router.beforeEach((to, from, next) => {
   if (router.app.$store) {
-    if (to.name === 'Login' && router.app.$store.state.username) {
-      next({name: 'Account'}); // Go to Account page if user navigates to Login and are signed in
-      return;
+    if (to.name !== "Login" && to.name !== "Create" && to.name !== "Home" && !router.app.$store.state.username) {
+      return next({name: "Login"});
     }
-
-    if (to.name === 'Account' && !router.app.$store.state.username) {
-      next({name: 'Login'}); // Go to Login page if user navigates to Account and are not signed in
-      return;
+    if ((to.name === "Login" || to.name === "Create") && router.app.$store.state.username) {
+      return next({name: "Account"});
     }
   }
 

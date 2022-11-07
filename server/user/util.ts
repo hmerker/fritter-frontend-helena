@@ -15,7 +15,25 @@ type UserResponse = {
  * @param {Date} date - A date object
  * @returns {string} - formatted date as string
  */
-const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:mm:ss a');
+const formatDate = (date: Date): string => {
+  const splitBySpaces = date.toString().split(" ");
+  const year = splitBySpaces[3].substring(2);
+  const month = splitBySpaces[2];
+  const day = splitBySpaces[1];
+  let hour = date.getHours();
+  const minutes = date.getMinutes();
+  let strTimeOfDay = "";
+  
+  if (hour < 12){
+    strTimeOfDay = "AM";
+  }
+  else{
+    strTimeOfDay = "PM";
+  }
+  hour = hour % 12;
+  
+  return (day + " " + month + ", 20" + year + " at " + hour + ":" + minutes + " " + strTimeOfDay);
+};
 
 /**
  * Transform a raw User object from the database into an object

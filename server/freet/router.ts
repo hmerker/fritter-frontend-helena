@@ -1,5 +1,6 @@
 import type {NextFunction, Request, Response} from "express";
 import express from "express";
+import {Types} from "mongoose";
 import FreetCollection from "./collection";
 import * as userValidator from "../user/middleware";
 import * as freetValidator from "../freet/middleware";
@@ -46,6 +47,13 @@ router.get(
       next();
       return;
     }
+    let freetId = req.query.freetId as string;
+    if (!freetId || freetId === null){
+      freetId = '';
+    }
+    if (!Types.ObjectId.isValid(freetId)) {
+      return res.status(400).json({message: "FreetId is invalid."});
+    }
     const freetFound = await FreetCollection.findById(req.query.freetId as string);
     if (!freetFound) {
       return res.status(404).json({message: "Cannot find the freet."});
@@ -66,18 +74,30 @@ router.get(
   * Get freets of users followed to populate user's feed
   *
   * @name GET /api/freets/feed?authorId=id
-  *
-  * @return {FreetResponse[]} - An array of freets created by user with id, authorId
-  * @throws {403} - If user is not logged in
-  *
   */
 router.get(
   "/feed",
   [userValidator.isUserLoggedIn],
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req.session.userId as string) ?? "";
-    const freetList = await FreetCollection.getFreetsForFeed(userId, "$in", req.query.authorId ? (req.query.authorId as string) : null);
+    const freetList = await FreetCollection.getFreetsForFeed(userId, req.query.authorId ? (req.query.authorId as string) : null);
     const response = freetList.map(util.constructFreetResponse);
+    return res.status(200).json(response);
+  }
+);
+
+/**
+ * Get freets for explore page
+ *
+ * @name GET /api/freets/explore?authorId=id
+ */
+ router.get(
+  "/explore",
+  [userValidator.isUserLoggedIn],
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req.session.userId as string) ?? "";
+    const freetList = await FreetCollection.getFreetsForExplore(userId, req.query.authorId ? (req.query.authorId as string) : null);
+    const response = freetList .map(util.constructFreetResponse);
     return res.status(200).json(response);
   }
 );
@@ -154,7 +174,7 @@ router.delete(
  * @throws {400} - If the freet content is empty or a stream of empty spaces
  * @throws {413} - If the freet content is more than 140 characters long
  */
-router.patch(
+router.put(
   "/:freetId?",
   [
     userValidator.isUserLoggedIn,

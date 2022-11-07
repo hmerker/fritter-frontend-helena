@@ -48,11 +48,18 @@ router.get(
       next();
       return;
     }
-    const freetFound = await SharedFreetCollection.findById(req.query.sharedFreetId as string);
-    if (!freetFound) {
+    let sharedFreetId = req.query.sharedFreetId as string;
+    if (!sharedFreetId || sharedFreetId === null){
+      sharedFreetId = '';
+    }
+    if (!Types.ObjectId.isValid(sharedFreetId)) {
+      return res.status(400).json({message: "sharedFreetId is invalid."});
+    }
+    const sharedFreetFound = await SharedFreetCollection.findById(req.query.sharedFreetId as string);
+    if (!sharedFreetFound) {
       return res.status(404).json({message: "Cannot find the shared freet."});
     }
-    return res.status(200).json(util.constructSharedFreetResponse(freetFound));
+    return res.status(200).json(util.constructSharedFreetResponse(sharedFreetFound));
   },
   [userValidator.isAuthorExists],
   async (req: Request, res: Response) => {

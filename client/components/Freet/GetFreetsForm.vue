@@ -20,7 +20,7 @@ export default {
         }
 
         this.$store.commit('updateFilter', this.value);
-        this.$store.commit('updateFreets', res);
+        this.$store.commit('refreshFreets');
       } catch (e) {
         if (this.value === this.$store.state.filter) {
           // This section triggers if you filter to a user but they

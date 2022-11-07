@@ -1,8 +1,13 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import createPersistedState from 'vuex-persistedstate';
+import Vue from "vue";
+import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
+
+async function get_helper(url: string, params = {}): Promise<any> {
+  const result = await fetch(url, { ...params, method: "GET" });
+  return await (result.ok ? result.json() : null);
+}
 
 /**
  * Storage for data that needs to be accessed from various compoentns.
@@ -10,9 +15,12 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     filter: null, // Username to filter shown freets by (null = show all)
-    freets: [], // All freets created in the app
+    freets: [], // all freets
+    freetsForFeed: [], // freets for feed
+    freetsForExplore: [], // freets for explore (other freets)
     username: null, // Username of the logged in user
-    alerts: {} // global success/error messages encountered during submissions to non-visible forms
+    userId: null, // User id of the logged in user
+    alerts: {}, // global success/error messages encountered during submissions to non-visible forms
   },
   mutations: {
     alert(state, payload) {
@@ -31,6 +39,9 @@ const store = new Vuex.Store({
        */
       state.username = username;
     },
+    setUserId(state, id) {
+      state.userId = id;
+    },
     updateFilter(state, filter) {
       /**
        * Update the stored freets filter to the specified one.
@@ -38,21 +49,19 @@ const store = new Vuex.Store({
        */
       state.filter = filter;
     },
-    updateFreets(state, freets) {
-      /**
-       * Update the stored freets to the provided freets.
-       * @param freets - Freets to store
-       */
-      state.freets = freets;
-    },
     async refreshFreets(state) {
-      /**
-       * Request the server for the currently available freets.
-       */
-      const url = state.filter ? `/api/users/${state.filter}/freets` : '/api/freets';
-      const res = await fetch(url).then(async r => r.json());
-      state.freets = res;
-    }
+      
+      const url = state.filter ? `/api/freets?author=${state.filter}` : '/api/freets';
+      const result = (await get_helper(url)) ?? [];
+      state.freets = result;
+      
+      const url_feed = state.filter ? `/api/freets?author=${state.filter}` : '/api/freets/feed';
+      const result_feed = (await get_helper(url_feed)) ?? [];
+      state.freetsForFeed = result_feed;
+      const url_explore = '/api/freets/explore';
+      const result_explore = (await get_helper(url_explore)) ?? [];
+      state.freetsForExplore = result_explore;
+    },
   },
   // Store data across page refreshes, only discard on browser close
   plugins: [createPersistedState()]

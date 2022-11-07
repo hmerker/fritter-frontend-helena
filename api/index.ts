@@ -1,9 +1,7 @@
 // This file must be in the /api folder for Vercel to detect it as a serverless function
 import type {Request, Response} from "express";
 import express from "express";
-import {engine} from "express-handlebars";
 import session from "express-session";
-import path from "path";
 import logger from "morgan";
 import http from "http";
 import mongoose from "mongoose";
@@ -11,13 +9,13 @@ import dotenv from "dotenv";
 import * as userValidator from "../server/user/middleware";
 import {userRouter} from "../server/user/router";
 import {freetRouter} from "../server/freet/router";
+import {sharedFreetRouter} from "../server/shared_freet/router";
 import {commentRouter} from "../server/comment/router";
-import {followerRouter} from "../server/follower/router";
+import {communityScoreRouter} from "../server/community_score/router";
+import {credibilityCountRouter} from "../server/credibility_count/router";
 import {likeRouter} from "../server/like/router";
 import {reportRouter} from "../server/report/router";
-import {communityScoreRouter} from "../server/community_score/router";
-import {sharedFreetRouter} from "../server/shared_freet/router";
-import {credibilityCountRouter} from "../server/credibility_count/router";
+import {followerRouter} from "../server/follower/router";
 import MongoStore from "connect-mongo";
 
 // Load environmental variables
@@ -78,17 +76,16 @@ app.use(
 // This makes sure that if a user is logged in, they still exist in the database
 app.use(userValidator.isCurrentSessionUserExists);
 
-
 // Add routers from routes folder
 app.use("/api/users", userRouter);
 app.use("/api/freets", freetRouter);
+app.use("/api/sharedFreets", sharedFreetRouter);
 app.use("/api/comments", commentRouter);
+app.use("/api/communityScores", communityScoreRouter);
+app.use("/api/credibilityCounts", credibilityCountRouter);
+app.use("/api/likes", likeRouter);
 app.use("/api/reports", reportRouter);
 app.use("/api/followers", followerRouter);
-app.use("/api/likes", likeRouter);
-app.use("/api/communityScores", communityScoreRouter);
-app.use("/api/sharedFreets", sharedFreetRouter);
-app.use("/api/credibilityCounts", credibilityCountRouter);
 
 // Catch all the other routes and display error message
 app.all("*", (req: Request, res: Response) => {

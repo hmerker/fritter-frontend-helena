@@ -7,11 +7,19 @@ import * as followerValidator from "./middleware";
 const router = express.Router();
 
 router.get(
-  "/:userId?",
+  "/followerCounts/:userId?",
   [followerValidator.isParamsGiven("query", "userId"), followerValidator.isParamsIdValid("query", "userId")],
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.query.userId;
     return res.status(200).json(await FollowerCollection.getFollowCounts(userId as string));
+  }
+);
+
+router.get(
+  "/following/:userId?",
+  [followerValidator.isParamsGiven("query", "userId"), followerValidator.isParamsIdValid("query", "userId")],
+  async (req: Request, res: Response, next: NextFunction) => {
+    return res.json({following: await FollowerCollection.checkIfAlreadyFollows(req.session.userId, req.query.userId as string)});
   }
 );
 

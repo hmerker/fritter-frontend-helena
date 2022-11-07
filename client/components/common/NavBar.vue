@@ -3,29 +3,59 @@
 <!-- This navbar takes advantage of both flex and grid layouts for positioning elements; feel free to redesign as you see fit! -->
 
 <template>
-  <nav>
-    <div class="left">
-      <img src="../../public/logo.svg">
-      <h1 class="title">
-        Fritter
-      </h1>
-    </div>
+  <nav class="">
+    <router-link to="/" class="">
+      <div class="left">
+        <img src="../../public/logo.svg" />
+        <h1 class="title a" style="font-weight: bold; text-decoration: none; padding-left: 15px">
+          Fritter
+        </h1>
+      </div>
+    </router-link>
     <div class="right">
-      <router-link to="/">
-        Home
+      <router-link
+        v-if="$store.state.username"
+        to="/feed"
+        class="a"
+      >
+        Feed
+      </router-link>
+      <router-link
+        v-if="$store.state.username"
+        to="/explore"
+        class="a"
+      >
+        Explore
       </router-link>
       <router-link
         v-if="$store.state.username"
         to="/account"
+        class="a"
       >
-        Account
+        {{ $store.state.username }}
       </router-link>
       <router-link
-        v-else
-        to="/login"
+        v-if="!$store.state.username"
+        to="/create"
+        class="a"
+        style="color: rgb(96,96,96)"
       >
-        Login
+        Create Account
       </router-link>
+      <router-link
+        v-if="!$store.state.username"
+        to="/login"
+        class="a"
+        style="color: rgb(96,96,96)"
+      >
+        Sign In
+      </router-link>
+      <button 
+        v-if="$store.state.username" 
+        @click="logout"
+      >
+        Sign Out
+      </button>
     </div>
     <section class="alerts">
       <article
@@ -39,10 +69,32 @@
   </nav>
 </template>
 
+<script>
+
+async function delete_helper(url, params = {}) {
+  const result = await fetch(url, { ...params, method: "DELETE" });
+  return await (result.ok ? result.json() : null);
+}
+
+export default {
+  name: "NavBar",
+  methods: {
+    logout() {
+      delete_helper("/api/users/session").then(() => {
+        this.$store.commit("setUsername", null);
+        this.$store.commit("setUserId", null);
+        this.$store.commit("alert", {message: "You have successfully signed out of your account.", status: "success"});
+        this.$router.push({name: "Home"});
+      });
+    },
+  },
+};
+</script>
+
 <style scoped>
 nav {
     padding: 1vw 2vw;
-    background-color: #ccc;
+    background-color: rgb(255, 255, 255);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -78,4 +130,21 @@ img {
 .alerts {
     width: 25%;
 }
+
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  text-decoration: underline;
+}
+
 </style>

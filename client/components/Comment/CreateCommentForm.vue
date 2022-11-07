@@ -16,19 +16,14 @@ export default {
   },
   data() {
     return {
-      url: '/api/comments',
-      method: 'POST',
-      hasBody: true,
-      defaultBody: {parentContentId: this.freetId, parentContentType: 'freet'},
-      fields: [
-          {id: 'content', label: 'Content', value: ''}
-        ],
-      title: 'Create a comment',
+      url: "/api/comments", method: "POST", hasBody: true,
+      defaultBody: {parentContentId: this.freetId, parentContentType: "freet"},
+      fields: [{id: "content", label: "Content", value: ""}],
+      title: "Write a new comment",
       callback: (comment) => {
         this.createCommentCallback(comment.comment);
-        const message = 'Successfully created a comment!';
-        this.$set(this.alerts, message, 'success');
-        setTimeout(() => this.$delete(this.alerts, message), 3000);
+        this.$set(this.alerts, "Comment was successfully created.", "success");
+        setTimeout(() => this.$delete(this.alerts, "Comment was successfully created."), 3000);
       },
     };
   },

@@ -2,39 +2,15 @@
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
 <template>
-  <article
+  <article 
     class="freet"
   >
     <header>
-      <h3 class="author">
-        @{{ freet.author }}
-      </h3>
-      <div
-        v-if="$store.state.username === freet.author"
-        class="actions"
-      >
-        <button
-          v-if="editing"
-          @click="submitEdit"
-        >
-          ✅ Save changes
-        </button>
-        <button
-          v-if="editing"
-          @click="stopEditing"
-        >
-          🚫 Discard changes
-        </button>
-        <button
-          v-if="!editing"
-          @click="startEditing"
-        >
-          ✏️ Edit
-        </button>
-        <button @click="deleteFreet">
-          🗑️ Delete
-        </button>
-      </div>
+      <router-link class="" :to="`/user?username=${freet.author}`">
+        <h3 class="">
+          @{{ freet.author }}
+        </h3>
+      </router-link>
     </header>
     <textarea
       v-if="editing"
@@ -42,8 +18,8 @@
       :value="draft"
       @input="draft = $event.target.value"
     />
-    <p
-      v-else
+    <p 
+      v-else 
       class="content"
     >
       {{ freet.content }}
@@ -52,9 +28,59 @@
       Posted at {{ freet.dateModified }}
       <i v-if="freet.edited">(edited)</i>
     </p>
-    <router-link :to="`/freet?id=${freet._id}`">
-      View All Comments
+    <div
+      v-if="$store.state.username === freet.author && showIndividualFreet"
+      class="actions"
+    >
+      <button 
+        v-if="editing" 
+        @click="submitEdit"
+      >
+        ✅ Save changes
+      </button>
+      <button 
+        v-if="editing" 
+        @click="stopEditing" 
+        class=""
+      >
+        🚫 Discard changes
+      </button>
+      <button 
+        v-if="!editing" 
+        @click="startEditing" 
+        class=""
+      >
+        ✏️ Edit
+      </button>
+      <button @click="deleteFreet">
+        🗑️ Delete
+      </button>
+    </div>
+    <router-link
+      class=""
+      v-if="showIndividualFreet"
+      :to="`/freet?id=${freet._id}`"
+    >
+      Show All Comments
     </router-link>
+    <section>
+      <div v-if="$store.state.username" class="">
+        <img @click="like" src="../../public/like.svg" width="32px" height="32px" class="" />
+        <span class="">{{freet.likes}}</span>
+        <img @click="report" src="../../public/report.svg" width="32px" height="32px" class=""/>
+        <span class="">{{freet.reports}}</span>
+        <img src="../../public/comment.svg" width="32px" height="32px" class="" />
+        <span class="">{{freet.comments}}</span>
+      </div>
+      <div v-else class="">
+        <img src="../../public/like.svg" width="32px" height="32px" class="" />
+        <span class="">{{freet.likes}}</span>
+        <img src="../../public/report.svg" width="32px" height="32px" class=""/>
+        <span class="">{{freet.reports}}</span>
+        <img src="../../public/comment.svg" width="32px" height="32px" class="" />
+        <span class="">{{freet.comments}}</span>
+      </div>
+    </section>
     <section class="alerts">
       <article
         v-for="(status, alert, index) in alerts"
@@ -68,20 +94,31 @@
 </template>
 
 <script>
+
+async function post_helper(url, params = {}) {
+  const result = await fetch(url, {...params, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin"});
+  return await (result.ok ? result.json() : null);
+}
+
 export default {
-  name: 'FreetComponent',
+  name: "FreetComponent",
   props: {
     // Data from the stored freet
     freet: {
       type: Object,
-      required: true
+      required: true,
+    },
+    showIndividualFreet: {
+      type: Boolean,
+      default: true,
+      required: false,
     },
   },
   data() {
     return {
       editing: false, // Whether or not this freet is in edit mode
       draft: this.freet.content, // Potentially-new content for this freet
-      alerts: {} // Displays success/error messages encountered during freet modification
+      alerts: {}, // Displays success/error messages encountered during freet modification
     };
   },
   methods: {
@@ -99,6 +136,40 @@ export default {
       this.editing = false;
       this.draft = this.freet.content;
     },
+    like() {
+      post_helper("/api/likes", {body: JSON.stringify({parentContentId: this.freet._id, parentContentType: "freet"}),}).then((result) => {
+        if (result) {
+          this.freet.likes = this.freet.likes + result.countChange;
+
+          let responseStr = "liked";
+          if (result.increment <= 0){
+            responseStr = "removed your like from";
+          }
+
+          this.$store.commit("alert", {message: `Note that you ${responseStr} this freet.`, status: "success"});
+        } 
+        else {
+          this.$store.commit("alert", {message: "An error occurred when attempting to like this freet.", status: "error"});
+        }
+      });
+    },
+    report() {
+      post_helper("/api/reports", {body: JSON.stringify({parentContentId: this.freet._id, parentContentType: "freet"})}).then((result) => {
+        if (result) {
+          this.freet.reports = this.freet.reports + result.countChange;
+          
+          let responseStr = "reported";
+          if (result.increment <= 0){
+            responseStr = "removed your report from";
+          }
+          
+          this.$store.commit("alert", {message: `Note that you ${responseStr} this freet.`, status: "success"});
+        } 
+        else {
+          this.$store.commit("alert", {message: "An error occurred when attempting to report this freet.", status: "error"});
+        }
+      });
+    },
     deleteFreet() {
       /**
        * Deletes this freet.
@@ -107,9 +178,10 @@ export default {
         method: 'DELETE',
         callback: () => {
           this.$store.commit('alert', {
-            message: 'Successfully deleted freet!', status: 'success'
+            message: 'Successfully deleted freet!',
+            status: 'success',
           });
-        }
+        },
       };
       this.request(params);
     },
@@ -148,7 +220,7 @@ export default {
       if (params.body) {
         options.body = params.body;
       }
-
+      
       try {
         const r = await fetch(`/api/freets/${this.freet._id}`, options);
         if (!r.ok) {
@@ -171,8 +243,8 @@ export default {
 
 <style scoped>
 .freet {
-    border: 1px solid #111;
-    padding: 20px;
-    position: relative;
+  border: 1px solid #111;
+  padding: 20px;
+  position: relative;
 }
 </style>
