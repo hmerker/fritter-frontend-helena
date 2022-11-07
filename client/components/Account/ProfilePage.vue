@@ -32,21 +32,6 @@
 <script>
 import FreetComponent from "@/components/Freet/FreetComponent.vue";
 
-async function get_helper(url, params = {}) {
-  const result = await fetch(url, { ...params, method: "GET" });
-  return await (result.ok ? result.json() : null);
-}
-
-async function delete_helper(url, params = {}) {
-  const result = await fetch(url, { ...params, method: "DELETE" });
-  return await (result.ok ? result.json() : null);
-}
-
-async function post_helper(url, params = {}) {
-  const result = await fetch(url, {...params, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin"});
-  return await (result.ok ? result.json() : null);
-}
-
 export default {
   name: "ProfilePage",
   components: {
@@ -60,19 +45,21 @@ export default {
       return;
     }
     
-    get_helper(`/api/users?username=${username}`).then((result) => {
-      if (result) {
-        this.user = result.user;
+    fetch(`/api/users?username=${username}`, { method: "GET" }).then(res => res.json()).then((res) => {
+      if (res) {
+        this.user = res.user;
         
-        get_helper(`/api/freets?author=${username}`).then((result) => {
-          this.freets = result;
+        fetch(`/api/freets?author=${username}`, { method: "GET" }).then(res => res.json()).then((res) => {
+          this.freets = res;
         });
-        get_helper(`/api/followers/followerCounts?userId=${result.user._id}`).then((result) => {
-          this.followerCounts = result;
+
+        fetch(`/api/followers/followerCounts?userId=${res.user._id}`, { method: "GET" }).then(res => res.json()).then((res) => {
+          this.followerCounts = res;
         });
-        get_helper(`/api/followers/following?userId=${result.user._id}`).then((result) => {
-          if (result) {
-            this.alreadyFollowing = result.following;
+
+        fetch(`/api/followers/following?userId=${res.user._id}`, { method: "GET" }).then(res => res.json()).then((res) => {
+          if (res) {
+            this.alreadyFollowing = res.following;
           }
         });
       } 
@@ -84,8 +71,8 @@ export default {
   methods: {
     followCallback() {
       if (this.alreadyFollowing) {
-        delete_helper(`/api/followers/${this.user._id}`).then((result) => {
-          if (result) {
+        fetch(`/api/followers/${this.user._id}`, { method: "DELETE" }).then(res => res.json()).then((res) => {
+          if (res) {
             this.alreadyFollowing = false;
             this.followerCounts.followers = this.followerCounts.followers - 1;
           } 
@@ -95,8 +82,9 @@ export default {
         });
       } 
       else {
-        post_helper(`/api/followers/`, {body: JSON.stringify({userFollowed: this.user._id })}).then((result) => {
-          if (result) {
+        const options = {body: JSON.stringify({userFollowed: this.user._id })};
+        fetch(`/api/followers/`, {...options, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin" }).then(res => res.json()).then((res) => {
+          if (res) {
             this.alreadyFollowing = true;
             this.followerCounts.followers = this.followerCounts.followers + 1;
           } 

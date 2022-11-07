@@ -42,11 +42,6 @@
 
 <script>
 
-async function post_helper(url, params = {}) {
-  const result = await fetch(url, {...params, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin"});
-  return await (result.ok ? result.json() : null);
-}
-
 export default {
   name: "BlockForm",
   data() {
@@ -74,35 +69,32 @@ export default {
         credentials: "same-origin", // Sends express-session credentials with request
       };
       if (this.hasBody) {
-        let defaultStuff = {};
-        if (this.defaultBody !== null && this.defaultBody !== undefined){
-          defaultStuff = this.defaultBody;
-        }
-        options.body = JSON.stringify({...Object.fromEntries(
-          this.fields.map((field) => {
+        options.body = JSON.stringify(Object.fromEntries(
+          this.fields.map(field => {
             const {id, value} = field;
             field.value = '';
             return [id, value];
           })
-        ),
-        ...defaultStuff,
-        });
+        ));
       }
 
       try {
-        const result = await post_helper(this.url, options);
-        if (!result) {
+        const r = await fetch(this.url, options);
+        if (!r.ok) {
+          const res = await r.json();
           throw new Error("An error has occurred.");
         }
         if (this.setUsername) {
-          this.$store.commit('setUsername', result.user ? result.user.username : null);
-          this.$store.commit('setUserId', result.user ? result.user._id : null);
+          const text = await r.text();
+          const res = text ? JSON.parse(text) : {user: null};
+          this.$store.commit('setUsername', res.user ? res.user.username : null);
+          this.$store.commit('setUserId', res.user ? res.user._id : null);
         }
         if (this.refreshFreets) {
           this.$store.commit('refreshFreets');
         }
         if (this.callback) {
-          this.callback(result);
+          this.callback();
         }
       } 
       catch (e) {

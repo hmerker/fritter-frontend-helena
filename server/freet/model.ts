@@ -74,7 +74,7 @@ const FreetSchema = new Schema<Freet>({
   },
   source: {
     type: String,
-    required: true,
+    required: false,
   },
   numCharsChanged: {
     type: Number,

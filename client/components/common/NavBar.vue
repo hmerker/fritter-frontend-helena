@@ -71,16 +71,11 @@
 
 <script>
 
-async function delete_helper(url, params = {}) {
-  const result = await fetch(url, { ...params, method: "DELETE" });
-  return await (result.ok ? result.json() : null);
-}
-
 export default {
   name: "NavBar",
   methods: {
     logout() {
-      delete_helper("/api/users/session").then(() => {
+      fetch(`/api/users/session`, { method: "DELETE" }).then(res => res.json()).then(() => {
         this.$store.commit("setUsername", null);
         this.$store.commit("setUserId", null);
         this.$store.commit("alert", {message: "You have successfully signed out of your account.", status: "success"});

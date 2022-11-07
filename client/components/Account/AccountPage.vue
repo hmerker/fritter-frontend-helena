@@ -46,11 +46,6 @@ import ChangePasswordForm from "@/components/Account/ChangePasswordForm.vue";
 import DeleteAccountForm from "@/components/Account/DeleteAccountForm.vue";
 import LogoutForm from "@/components/Account/LogoutForm.vue";
 
-async function get_helper(url, params = {}) {
-  const result = await fetch(url, { ...params, method: "GET" });
-  return await (result.ok ? result.json() : null);
-}
-
 export default {
   name: "AccountPage",
   components: {
@@ -66,16 +61,16 @@ export default {
     };
   },
   mounted() {
-    get_helper(`/api/communityScores`).then((result) => {
+    fetch(`/api/communityScores`, { method: "GET" }).then(res => res.json()).then((res) => {
       this.communityScore = 0;
-      if (result?.score !== null && result?.score !== undefined){
-        this.communityScore = result.score;
+      if (res?.score !== null && res?.score !== undefined){
+        this.communityScore = res.score;
       }
     });
-    get_helper(`/api/followers/followerCounts?userId=${this.$store.state.userId}`).then((result) => {
+    fetch(`/api/followers/followerCounts?userId=${this.$store.state.userId}`, { method: "GET" }).then(res => res.json()).then((res) => {
       this.followerCounts = null;
-      if (result !== null && result !== undefined){
-        this.followerCounts = result;
+      if (res !== null && res !== undefined){
+        this.followerCounts = res;
       }
     });
   },

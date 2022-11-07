@@ -24,11 +24,6 @@
 
 <script>
 
-async function post_helper(url, params = {}) {
-  const result = await fetch(url, {...params, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin"});
-  return await (result.ok ? result.json() : null);
-}
-
 export default {
   name: "CommentComponent",
   props: {
@@ -40,12 +35,13 @@ export default {
   },
   methods: {
     like() {
-      post_helper("/api/likes", {body: JSON.stringify({parentContentId: this.comment._id, parentContentType: "comment"}),}).then((result) => {
-        if (result) {
-          this.comment.likes = this.comment.likes + result.countChange;
+      const options = {body: JSON.stringify({parentContentId: this.freet._id, parentContentType: "freet"})};
+      fetch(`/api/likes`, {...options, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin" }).then(res => res.json()).then((res) => {
+        if (res) {
+          this.comment.likes = this.comment.likes + res.countChange;
 
           let responseStr = "liked";
-          if (result.increment <= 0){
+          if (res.countChange <= 0){
             responseStr = "removed your like from";
           }
 
@@ -57,12 +53,13 @@ export default {
       });
     },
     report() {
-      post_helper("/api/reports", {body: JSON.stringify({parentContentId: this.comment._id, parentContentType: "comment"})}).then((result) => {
-        if (result) {
-          this.comment.reports = this.comment.reports + result.countChange;
+      const options = {body: JSON.stringify({parentContentId: this.freet._id, parentContentType: "freet"})};
+      fetch(`/api/reports`, {...options, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin" }).then(res => res.json()).then((res) => {
+        if (res) {
+          this.comment.reports = this.comment.reports + res.countChange;
           
           let responseStr = "reported";
-          if (result.increment <= 0){
+          if (res.countChange <= 0){
             responseStr = "removed your report from";
           }
           

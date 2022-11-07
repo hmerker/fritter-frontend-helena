@@ -174,7 +174,7 @@ router.delete(
  * @throws {400} - If the freet content is empty or a stream of empty spaces
  * @throws {413} - If the freet content is more than 140 characters long
  */
-router.put(
+router.patch(
   "/:freetId?",
   [
     userValidator.isUserLoggedIn,

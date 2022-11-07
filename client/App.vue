@@ -10,21 +10,16 @@
 <script lang="ts">
 import NavBar from '@/components/common/NavBar.vue';
 
-async function get_helper(url: string, params = {}) {
-  const result = await fetch(url, { ...params, method: "GET" });
-  return await (result.ok ? result.json() : null);
-}
-
 export default {
   name: 'App',
   components: {NavBar},
   beforeCreate() {
     // Sync stored username to current session
-    get_helper('/api/users/session', {
+    fetch('/api/users/session', {
       credentials: 'same-origin', // Sends express-session credentials with request
-    }).then((result) => {
-      this.$store.commit('setUsername', result ? result.user.username : null);
-      this.$store.commit('setUserId', result ? result.user._id : null);
+    }).then(res => res.json()).then(res => {
+      this.$store.commit('setUsername', res ? res.user.username : null);
+      this.$store.commit('setUserId', res ? res.user._id : null);
     });
 
     // Clear alerts on page refresh

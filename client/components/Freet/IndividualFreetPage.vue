@@ -41,16 +41,6 @@ import FreetComponent from '@/components/Freet/FreetComponent.vue';
 import CommentComponent from '@/components/Comment/CommentComponent.vue';
 import CreateCommentForm from '@/components/Comment/CreateCommentForm.vue';
 
-async function get_helper(url, params = {}) {
-  const result = await fetch(url, { ...params, method: "GET" });
-  return await (result.ok ? result.json() : null);
-}
-
-async function delete_helper(url, params = {}) {
-  const result = await fetch(url, { ...params, method: "DELETE" });
-  return await (result.ok ? result.json() : null);
-}
-
 export default {
   name: 'IndividualFreetPage',
   components: {
@@ -60,13 +50,15 @@ export default {
   },
   mounted() {
     const {id} = this.$route.query;
-    get_helper(`/api/freets?freetId=${id}`).then((result) => {
-      this.freet = null;
-      if (result !== null && result !== undefined){
-        this.freet = result;
+    const options = {};
+    fetch(`/api/freets?freetId=${id}`, { method: "GET" }).then(res => res.json()).then((res) => {
+      if (res){
+        this.freet = res;
       }
-      result && get_helper(`/api/comments?parentContentId=${id}`).then((result) => {
-        this.comments = result;
+      res && fetch(`/api/comments?parentContentId=${id}`, { method: "GET" }).then(res => res.json()).then((res) => {
+        if (res){
+          this.comments = res;
+        }
       });
     });
   },
@@ -78,8 +70,8 @@ export default {
   },
   methods: {
     deleteCommentCallback(commentId) {
-      delete_helper(`/api/comments/${commentId}`).then((result) => {
-        if (result) {
+      fetch(`/api/comments/${commentId}`, { method: "DELETE" }).then((res) => {
+        if (res.ok) {
           this.comments = this.comments.filter((comment) => comment._id !== commentId);
           this.freet.comments = this.freet.comments - 1;
         }
