@@ -83,6 +83,11 @@ export default {
       this.comments.unshift(comment);
       this.freet.comments = this.freet.comments + 1;
       this.$store.commit('alert', {message: 'You sucessfully created a comment.', status: 'success'});
+      fetch(`/api/comments?parentContentId=${this.$store.state.filter}`, { method: "GET" }).then(res => res.json()).then((res) => {
+        if (res){
+          this.comments = res;
+        }
+      });
     },
   },
 };
