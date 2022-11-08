@@ -11,6 +11,7 @@
           <h2>Explore content and find new users to follow! </h2>
         </div>
       </header>
+      <h3> Freets </h3>
       <section v-if="$store.state.freetsForExplore.length">
         <FreetComponent
           v-for="freet in $store.state.freetsForExplore"
@@ -24,7 +25,26 @@
         </h3>
         <h3>
           Check out your
-          <router-link to="/">
+          <router-link to="/feed">
+            <button> Feed </button>
+          </router-link>
+        </h3>
+      </article>
+      <h3> Shared Freets </h3>
+      <section v-if="$store.state.sharedFreetsForExplore.length">
+        <SharedFreetComponent
+          v-for="sharedFreet in $store.state.sharedFreetsForExplore"
+          :key="sharedFreet.id"
+          :sharedFreet="sharedFreet"
+        />
+      </section>
+      <article v-else>
+        <h3>
+          No shared freets found. 
+        </h3>
+        <h3>
+          Check out your
+          <router-link to="/feed">
             <button> Feed </button>
           </router-link>
         </h3>
@@ -37,13 +57,19 @@
 import FreetComponent from '@/components/Freet/FreetComponent.vue';
 import CreateFreetForm from '@/components/Freet/CreateFreetForm.vue';
 import GetFreetsForm from '@/components/Freet/GetFreetsForm.vue';
+import SharedFreetComponent from '@/components/SharedFreet/SharedFreetComponent.vue';
+import CreateSharedFreetForm from '@/components/SharedFreet/CreateSharedFreetForm.vue';
+import GetSharedFreetsForm from '@/components/SharedFreet/GetSharedFreetsForm.vue';
 
 export default {
   name: 'ExplorePage',
   components: { 
     FreetComponent, 
     GetFreetsForm, 
-    CreateFreetForm 
+    CreateFreetForm,
+    SharedFreetComponent, 
+    GetSharedFreetsForm, 
+    CreateSharedFreetForm  
   },
 };
 </script>

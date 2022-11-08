@@ -1,4 +1,4 @@
-import type {HydratedDocument} from "mongoose";
+import {HydratedDocument, Types} from "mongoose";
 import type {SharedFreet, PopulatedSharedFreet} from "./model";
 import moment from 'moment';
 import type {User} from "../user/model";
@@ -13,7 +13,7 @@ type SharedFreetResponse = {
   comments: number;
   likes: number;
   reports: number;
-  collaboratingAuthors: Array<User>;
+  collaboratingAuthors: string;
 };
 
 /**
@@ -62,6 +62,7 @@ const constructSharedFreetResponse = (freet: HydratedDocument<SharedFreet>): Sha
     ...freetCopy,
     _id: freetCopy._id.toString(),
     author: username,
+    collaboratingAuthors: JSON.stringify(freet.collaboratingAuthors).substring(1, -1),
     dateCreated: formatDate(freet.dateCreated),
     dateModified: formatDate(freet.dateModified),
   };

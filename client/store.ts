@@ -13,6 +13,9 @@ const store = new Vuex.Store({
     freets: [], // all freets
     freetsForFeed: [], // freets for feed
     freetsForExplore: [], // freets for explore (other freets)
+    sharedFreets: [], // all shared freets
+    sharedFreetsForFeed: [], // shared freets for feed
+    sharedFreetsForExplore: [], // shared freets for explore (other shared freets)
     comments: [],
     username: null, // Username of the logged in user
     userId: null, // User id of the logged in user
@@ -52,6 +55,13 @@ const store = new Vuex.Store({
        */
       state.freets = freets;
     },
+    updateSharedFreets(state, sharedFreets) {
+      /**
+       * Update the stored freets to the provided freets.
+       * @param sharedFreets - Freets to store
+       */
+      state.sharedFreets = sharedFreets;
+    },
     async refreshFreets(state) {
       
       const url = state.filter ? `/api/freets?author=${state.filter}` : '/api/freets';
@@ -65,6 +75,20 @@ const store = new Vuex.Store({
       const url_explore = '/api/freets/explore';
       const res_explore = await fetch(url_explore).then(async r => r.json());
       state.freetsForExplore = res_explore;
+    },
+    async refreshSharedFreets(state) {
+      
+      const url = state.filter ? `/api/sharedFreets?author=${state.filter}` : '/api/sharedFreets';
+      const res = await fetch(url).then(async r => r.json());
+      state.sharedFreets = res;
+      
+      const url_feed = state.filter ? `/api/sharedFreets?author=${state.filter}` : '/api/sharedFreets/feed';
+      const res_feed = await fetch(url_feed).then(async r => r.json());
+      state.sharedFreetsForFeed = res_feed;
+      
+      const url_explore = '/api/sharedFreets/explore';
+      const res_explore = await fetch(url_explore).then(async r => r.json());
+      state.sharedFreetsForExplore = res_explore;
     },
     async refreshComments(state){
       const url = state.filter ? `/api/comments?parentContentId=${state.filter}` : null;

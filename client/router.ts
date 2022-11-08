@@ -7,6 +7,7 @@ import AccountPage from "./components/Account/AccountPage.vue";
 import LoginPage from "./components/Login/LoginPage.vue";
 import CreateAccount from "./components/Login/CreateAccount.vue";
 import IndividualFreetPage from "./components/Freet/IndividualFreetPage.vue";
+import IndividualSharedFreetPage from "./components/SharedFreet/IndividualSharedFreetPage.vue";
 import ProfilePage from "./components/Account/ProfilePage.vue";
 import NotFound from "./NotFound.vue";
 
@@ -20,6 +21,7 @@ const routes = [
   {path: "/create", name: "Create", component: CreateAccount},
   {path: "/explore", name: "Explore", component: ExplorePage},
   {path: "/freet", name: "IndividualFreet", component: IndividualFreetPage},
+  {path: "/sharedFreet", name: "IndividualSharedFreet", component: IndividualSharedFreetPage},
   {path: "/user", name: "Profile", component: ProfilePage},
   {path: "*", name: "Not Found", component: NotFound},
 ];

@@ -100,7 +100,7 @@ const isValidFreetModifier = async (req: Request, res: Response, next: NextFunct
   }
   if (flag === true) {
     res.status(403).json({
-      error: "One or more of the usernames in colaboratingAuthors correspond to users that do not exist.",
+      error: `One or more of the usernames in colaboratingAuthors correspond to users that do not exist. ${req.body.collaboratingAuthors}`,
     });
     return;
   }

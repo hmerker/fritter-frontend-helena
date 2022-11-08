@@ -72,6 +72,38 @@ router.get(
 );
 
 /**
+  * Get freets of users followed to populate user's feed
+  *
+  * @name GET /api/sharedFreets/feed?authorId=id
+  */
+ router.get(
+  "/feed",
+  [userValidator.isUserLoggedIn],
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req.session.userId as string) ?? "";
+    const sharedFreetList = await SharedFreetCollection.getSharedFreetsForFeed(userId, req.query.authorId ? (req.query.authorId as string) : null);
+    const response = sharedFreetList.map(util.constructSharedFreetResponse);
+    return res.status(200).json(response);
+  }
+);
+
+/**
+ * Get freets for explore page
+ *
+ * @name GET /api/sharedFreets/explore?authorId=id
+ */
+ router.get(
+  "/explore",
+  [userValidator.isUserLoggedIn],
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req.session.userId as string) ?? "";
+    const sharedFreetList = await SharedFreetCollection.getSharedFreetsForExplore(userId, req.query.authorId ? (req.query.authorId as string) : null);
+    const response = sharedFreetList .map(util.constructSharedFreetResponse);
+    return res.status(200).json(response);
+  }
+);
+
+/**
  * Create a new shared freet
  *
  * @name POST /api/sharedFreets

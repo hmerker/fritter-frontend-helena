@@ -24,6 +24,7 @@
       </h3>
     </section>
     <section style ='background-color: white; padding: 30px; border-radius: 8px;'>
+      <h3> Freets </h3>
       <header>
         <div class="left">
           <h2>
@@ -56,6 +57,40 @@
         <h3>No freets found.</h3>
       </article>
     </section>
+    <section style ='background-color: white; padding: 30px; border-radius: 8px;'>
+      <h3> Shared Freets </h3>
+      <header>
+        <div class="left">
+          <h2>
+            <span v-if="$store.state.filter">
+              by @{{ $store.state.filter }}
+            </span>
+          </h2>
+        </div>
+        <div class="right">
+          <GetSharedFreetsForm
+            ref="getSharedFreetsForm"
+            value="author"
+            placeholder="🔍 Filter by author (optional)"
+            button="🔄 Get shared freets"
+          />
+        </div>
+      </header>
+      <section
+        v-if="$store.state.sharedFreets.length"
+      >
+        <SharedFreetComponent
+          v-for="sharedFreet in $store.state.sharedFreets"
+          :key="sharedFreet.id"
+          :sharedFreet="sharedFreet"
+        />
+      </section>
+      <article
+        v-else
+      >
+        <h3>No shared freets found.</h3>
+      </article>
+    </section>
   </main>
 </template>
 
@@ -63,12 +98,16 @@
 import FreetComponent from '@/components/Freet/FreetComponent.vue';
 import CreateFreetForm from '@/components/Freet/CreateFreetForm.vue';
 import GetFreetsForm from '@/components/Freet/GetFreetsForm.vue';
+import SharedFreetComponent from '@/components/SharedFreet/SharedFreetComponent.vue';
+import CreateSharedFreetForm from '@/components/SharedFreet/CreateSharedFreetForm.vue';
+import GetSharedFreetsForm from '@/components/SharedFreet/GetSharedFreetsForm.vue';
 
 export default {
   name: "HomePage",
-  components: {FreetComponent, GetFreetsForm, CreateFreetForm},
+  components: {FreetComponent, GetFreetsForm, CreateFreetForm, SharedFreetComponent, GetSharedFreetsForm, CreateSharedFreetForm},
   mounted() {
     this.$refs.getFreetsForm.submit();
+    this.$refs.getSharedFreetsForm.submit();
   }
 };
 </script>

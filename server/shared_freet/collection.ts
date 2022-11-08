@@ -2,6 +2,7 @@ import type {HydratedDocument, Types} from "mongoose";
 import type {SharedFreet} from "./model";
 import SharedFreetModel from "./model";
 import UserCollection from "../user/collection";
+import FollowerCollection from "../follower/collection";
 
 class SharedFreetCollection {
   /**
@@ -17,6 +18,42 @@ class SharedFreetCollection {
     }
     return sharedFreetFound;
   }
+
+  /**
+    * Get freets for user's feed
+    *
+    * @param userId - user id
+    * @returns list of freets
+    */
+   static async getSharedFreetsForFeed(userId: Types.ObjectId | string, authorId?: string
+    ): Promise<Array<HydratedDocument<SharedFreet>>> {
+      const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
+      const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
+      usersFollowed.push(userId as Types.ObjectId);
+      const sharedFreetsToReturn = await SharedFreetModel.find({authorId: {["$in"]: usersFollowed}}).sort({dateCreated: "desc"}).populate("authorId");
+      if (authorId) {
+        return sharedFreetsToReturn.filter((sharedFreetToReturn) => sharedFreetToReturn.authorId._id.toString() === authorId);
+      }
+      return sharedFreetsToReturn;
+    }
+  
+    /**
+      * Get freets for user's explore page
+      *
+      * @param userId - user id
+      * @returns list of freets
+      */
+     static async getSharedFreetsForExplore(userId: Types.ObjectId | string, authorId?: string
+    ): Promise<Array<HydratedDocument<SharedFreet>>> {
+      const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
+      const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
+      usersFollowed.push(userId as Types.ObjectId);
+      const sharedFreetsToReturn = await SharedFreetModel.find({authorId: {["$nin"]: usersFollowed}}).sort({dateCreated: "desc"}).populate("authorId");
+      if (authorId) {
+        return sharedFreetsToReturn.filter((sharedFreetToReturn) => sharedFreetToReturn.authorId._id.toString() === authorId);
+      }
+      return sharedFreetsToReturn;
+    }
   
   /**
    * Add a shared freet to the collection
