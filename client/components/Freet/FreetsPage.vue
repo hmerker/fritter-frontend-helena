@@ -8,7 +8,7 @@
       </header>
       <CreateFreetForm />
     </section>
-    <section v-if="$store.state.username">
+    <section style ='background-color: white; padding: 30px; border-radius: 8px;' v-if="$store.state.username">
       <header>
         <div class="left">
           <h2>
@@ -16,7 +16,9 @@
             <span v-if="$store.state.filter">
               by @{{ $store.state.filter }}
             </span>
-            <span v-else>from your following</span>
+            <span v-else>
+              by you and the Fritter users you follow.
+            </span>
           </h2>
         </div>
         <div class="right">
@@ -39,11 +41,13 @@
       </section>
       <article v-else>
         <h3>
-          There are no freets found to populate your feed. Browse the
+          There are no freets found to populate your feed. 
+        </h3>
+        <h3>
           <router-link to="/explore"> 
-            Explore 
-          </router-link> 
-          page.
+            <button>Explore</button>
+          </router-link>
+          to discover new content!
         </h3>
       </article>
     </section>

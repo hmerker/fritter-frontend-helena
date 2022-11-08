@@ -63,22 +63,22 @@
     >
       Show All Comments
     </router-link>
-    <section>
+    <section style="padding-top:10px">
       <div v-if="$store.state.username" class="">
-        <img @click="like" src="../../public/like.svg" width="32px" height="32px" class="" />
-        <span class="">{{freet.likes}}</span>
-        <img @click="report" src="../../public/report.svg" width="32px" height="32px" class=""/>
-        <span class="">{{freet.reports}}</span>
-        <img src="../../public/comment.svg" width="32px" height="32px" class="" />
-        <span class="">{{freet.comments}}</span>
+        <img @click="like" src="../../public/like.svg" width="48px" height="48px" />
+        <span>{{freet.likes}}</span>
+        <img @click="report" src="../../public/report.svg" width="48px" height="48px" />
+        <span>{{freet.reports}}</span>
+        <img src="../../public/comment.svg" width="48px" height="48px" />
+        <span>{{freet.comments}}</span>
       </div>
       <div v-else class="">
-        <img src="../../public/like.svg" width="32px" height="32px" class="" />
-        <span class="">{{freet.likes}}</span>
-        <img src="../../public/report.svg" width="32px" height="32px" class=""/>
-        <span class="">{{freet.reports}}</span>
-        <img src="../../public/comment.svg" width="32px" height="32px" class="" />
-        <span class="">{{freet.comments}}</span>
+        <img src="../../public/like.svg" width="48px" height="48px" />
+        <span >{{freet.likes}}</span>
+        <img src="../../public/report.svg" width="48px" height="48px" />
+        <span >{{freet.reports}}</span>
+        <img src="../../public/comment.svg" width="48px" height="48px" />
+        <span >{{freet.comments}}</span>
       </div>
     </section>
     <section class="alerts">
@@ -243,5 +243,10 @@ export default {
   border: 1px solid #111;
   padding: 20px;
   position: relative;
+}
+img {
+  padding-right: 10px;
+  padding-left: 10px;
+  cursor: pointer;
 }
 </style>

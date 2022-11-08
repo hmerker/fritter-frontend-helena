@@ -1,21 +1,22 @@
 <template>
-  <article class="">
+  <article style ='background-color: rgb(250, 250, 250); padding: 30px; border-radius: 8px; margin-top: 20px'>
     <span>
       <router-link class="" :to="`/user?username=${comment.author}`">
         <span class="">@{{ comment.author }}</span>
-      </router-link>: {{ comment.content }}
+      </router-link> 
+      <p> {{ comment.content }} </p>
     </span>
     <p class="">
       {{ comment.dateCreated }}
     </p>
     <div v-if="$store.state.username === comment.author" class="">
-      <button @click="() => deleteCommentCallback(comment._id)">Delete</button>
+      <button @click="() => deleteCommentCallback(comment._id)"> 🗑️ Delete</button>
     </div>
     <section>
-      <div class="">
-        <img @click="like" src="../../public/like.svg" width="32px" height="32px" class=""/>
+      <div style="padding-top:10px">
+        <img @click="like" src="../../public/like.svg" width="48px" height="48px" class=""/>
         <span class="">{{ comment.likes }}</span>
-        <img @click="report" src="../../public/report.svg" width="32px" height="32px" class=""/>
+        <img @click="report" src="../../public/report.svg" width="48px" height="48px" class=""/>
         <span class="">{{ comment.reports }}</span>
       </div>
     </section>
@@ -35,7 +36,7 @@ export default {
   },
   methods: {
     like() {
-      const options = {body: JSON.stringify({parentContentId: this.freet._id, parentContentType: "freet"})};
+      const options = {body: JSON.stringify({parentContentId: this.comment._id, parentContentType: "comment"})};
       fetch(`/api/likes`, {...options, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin" }).then(res => res.json()).then((res) => {
         if (res) {
           this.comment.likes = this.comment.likes + res.countChange;
@@ -53,7 +54,7 @@ export default {
       });
     },
     report() {
-      const options = {body: JSON.stringify({parentContentId: this.freet._id, parentContentType: "freet"})};
+      const options = {body: JSON.stringify({parentContentId: this.comment._id, parentContentType: "comment"})};
       fetch(`/api/reports`, {...options, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin" }).then(res => res.json()).then((res) => {
         if (res) {
           this.comment.reports = this.comment.reports + res.countChange;
@@ -73,3 +74,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+img {
+  padding-right: 10px;
+  padding-left: 10px;
+  cursor: pointer;
+}
+</style>

@@ -5,7 +5,7 @@
         <h1>Explore</h1>
       </header>
     </section>
-    <section>
+    <section style ='background-color: white; padding: 30px; border-radius: 8px;'>
       <header>
         <div class="left">
           <h2>Explore content and find new users to follow! </h2>
@@ -20,11 +20,13 @@
       </section>
       <article v-else>
         <h3>
-          No freets found. Check out the freets on your
+          No freets found. 
+        </h3>
+        <h3>
+          Check out your
           <router-link to="/">
-            feed 
+            <button> Feed </button>
           </router-link>
-          !
         </h3>
       </article>
     </section>

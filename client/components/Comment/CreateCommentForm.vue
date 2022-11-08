@@ -21,7 +21,7 @@ export default {
       hasBody: true,
       defaultBody: {parentContentId: this.freetId, parentContentType: "freet"},
       fields: [{id: "content", label: "Content", value: ""}],
-      title: "Write a new comment",
+      title: "Write a New Comment",
       refreshComments: true,
       callback: (comment) => {
         this.createCommentCallback(comment);

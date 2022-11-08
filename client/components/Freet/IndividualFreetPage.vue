@@ -2,7 +2,7 @@
   <main>
     <section>
       <header>
-        <h1>Individual Freet Page</h1>
+        <h1>Freet Page</h1>
       </header>
       <h3 
         class="" 
@@ -10,7 +10,7 @@
       >
         A freet does not exist with the id of '{{ this.$route.query.id }}'.
       </h3>
-      <section v-if="freet">
+      <section style ='background-color: white; padding: 30px; border-radius: 8px;' v-if="freet">
         <FreetComponent 
           key="freet" 
           :freet="freet" 
