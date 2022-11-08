@@ -12,9 +12,9 @@
         Each user has a community score, which quantifies the positivity of their freets, shared freets, and comments. A score that is higher than zero indicates overall positive content while a score that is lower than zero implies negativity. If your score is above zero, congratulations on making a positive impact on the Fritter community!
       </p>
       <div
-        v-if="communityScore"
+        v-if="communityScore || communityScore === 0"
       >
-        {{Number.parseFloat(this.communityScore).toFixed(1)}}
+        {{Number.parseFloat(this.communityScore + 1.25).toFixed(2)}}
       </div>
       <section v-if="followerCounts">
         <h2>Followers and Following Totals</h2>

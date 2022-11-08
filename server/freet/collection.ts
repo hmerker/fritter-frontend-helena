@@ -31,6 +31,7 @@ class FreetCollection {
   ): Promise<Array<HydratedDocument<Freet>>> {
     const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
     const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
+    usersFollowed.push(userId as Types.ObjectId);
     const freetsToReturn = await FreetModel.find({authorId: {["$in"]: usersFollowed}}).sort({dateCreated: "desc"}).populate("authorId");
     if (authorId) {
       return freetsToReturn.filter((freetToReturn) => freetToReturn.authorId._id.toString() === authorId);
@@ -48,6 +49,7 @@ class FreetCollection {
   ): Promise<Array<HydratedDocument<Freet>>> {
     const followerEntries = await FollowerCollection.getUsersFollowedList(userId);
     const usersFollowed = followerEntries.map((followerEntry) => followerEntry.userFollowed);
+    usersFollowed.push(userId as Types.ObjectId);
     const freetsToReturn = await FreetModel.find({authorId: {["$nin"]: usersFollowed}}).sort({dateCreated: "desc"}).populate("authorId");
     if (authorId) {
       return freetsToReturn.filter((freetToReturn) => freetToReturn.authorId._id.toString() === authorId);
