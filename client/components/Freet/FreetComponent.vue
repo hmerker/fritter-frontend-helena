@@ -24,6 +24,7 @@
     >
       {{ freet.content }}
     </p>
+    <h5 v-if='freet.source'> <b>Source:</b> {{freet.source}}</h5>
     <p class="info">
       Posted at {{ freet.dateModified }}
       <i v-if="freet.edited">(edited)</i>

@@ -16,6 +16,15 @@
       >
         {{Number.parseFloat(this.communityScore + 1.25).toFixed(2)}}
       </div>
+      <h2>Credibility Count</h2>
+      <p>
+        Each user also has a credibility count, which keeps track of the number of sources they add to their freets. Fritter aims to decrease misinformation, so thanks if you have added any sources!
+      </p>
+      <div
+        v-if="credibilityCount || credibilityCount === 0"
+      >
+        {{Number.parseFloat(this.credibilityCount).toFixed(0)}}
+      </div>
       <section v-if="followerCounts">
         <h2>Followers and Following Totals</h2>
         <div class="">
@@ -57,6 +66,7 @@ export default {
   data() {
     return {
       communityScore: 0,
+      credibilityCount: 0,
       followerCounts: null,
     };
   },
@@ -65,6 +75,12 @@ export default {
       this.communityScore = 0;
       if (res?.score !== null && res?.score !== undefined){
         this.communityScore = res.score;
+      }
+    });
+    fetch(`/api/credibilityCounts`, { method: "GET" }).then(res => res.json()).then((res) => {
+      this.credibilityCount = 0;
+      if (res?.score !== null && res?.score !== undefined){
+        this.credibilityCount = res.score;
       }
     });
     fetch(`/api/followers/followerCounts?userId=${this.$store.state.userId}`, { method: "GET" }).then(res => res.json()).then((res) => {

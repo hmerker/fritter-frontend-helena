@@ -44,6 +44,7 @@ const constructFreetResponse = (freet: HydratedDocument<Freet>): FreetResponse =
     ...freetCopy,
     _id: freetCopy._id.toString(),
     author: username,
+    source: freet.source,
     dateCreated: formatDate(freet.dateCreated),
     dateModified: formatDate(freet.dateModified),
   };
