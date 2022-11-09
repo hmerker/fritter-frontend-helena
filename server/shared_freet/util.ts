@@ -2,6 +2,8 @@ import {HydratedDocument, Types} from "mongoose";
 import type {SharedFreet, PopulatedSharedFreet} from "./model";
 import moment from 'moment';
 import type {User} from "../user/model";
+import UserCollection from "../user/collection";
+import SharedFreetCollection from "./collection";
 
 // Update this if you add a property to the Freet type!
 type SharedFreetResponse = {
@@ -22,25 +24,7 @@ type SharedFreetResponse = {
  * @param {Date} date - A date object
  * @returns {string} - formatted date as string
  */
-const formatDate = (date: Date): string => {
-  const splitBySpaces = date.toString().split(" ");
-  const year = splitBySpaces[3].substring(2);
-  const month = splitBySpaces[2];
-  const day = splitBySpaces[1];
-  let hour = date.getHours();
-  const minutes = date.getMinutes();
-  let strTimeOfDay = "";
-  
-  if (hour < 12){
-    strTimeOfDay = "AM";
-  }
-  else{
-    strTimeOfDay = "PM";
-  }
-  hour = hour % 12;
-  
-  return (day + " " + month + ", 20" + year + " at " + hour + ":" + minutes + " " + strTimeOfDay);
-};
+const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:mm:ss a');
 
 
 /**
@@ -58,11 +42,12 @@ const constructSharedFreetResponse = (freet: HydratedDocument<SharedFreet>): Sha
   };
   const {username} = freetCopy.authorId;
   delete freetCopy.authorId;
+
   return {
     ...freetCopy,
     _id: freetCopy._id.toString(),
     author: username,
-    collaboratingAuthors: JSON.stringify(freet.collaboratingAuthors).substring(1, -1),
+    collaboratingAuthors: freet.collaboratingAuthorsUsernames,
     dateCreated: formatDate(freet.dateCreated),
     dateModified: formatDate(freet.dateModified),
   };

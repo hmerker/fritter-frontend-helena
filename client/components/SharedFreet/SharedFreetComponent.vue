@@ -11,6 +11,7 @@
           @{{ sharedFreet.author }}
         </h3>
       </router-link>
+      <h4> Collaborating Authors: {{sharedFreet.collaboratingAuthors}}</h4>
     </header>
     <textarea
       v-if="editing"

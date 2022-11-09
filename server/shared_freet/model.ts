@@ -18,6 +18,7 @@ export type SharedFreet = {
   likes: number;
   reports: number;
   collaboratingAuthors: Array<Types.ObjectId>;
+  collaboratingAuthorsUsernames: string;
 };
 
 export type PopulatedSharedFreet = {
@@ -30,6 +31,7 @@ export type PopulatedSharedFreet = {
   likes: number;
   reports: number;
   collaboratingAuthors: Array<User>;
+  collaboratingAuthorsUsernames: string;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -74,7 +76,11 @@ const SharedFreetSchema = new Schema<SharedFreet>({
     type: Schema.Types.ObjectId,
     required: true,
     ref: "User",
-  }]
+  }],
+  collaboratingAuthorsUsernames: {
+    type: String,
+    required: false,
+  },
 });
 
 const SharedFreetModel = model<SharedFreet>("SharedFreet", SharedFreetSchema);

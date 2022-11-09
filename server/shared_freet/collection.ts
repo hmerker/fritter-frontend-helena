@@ -63,11 +63,11 @@ class SharedFreetCollection {
    * @param {Array<Types.ObjectId>} collaboratingAuthors - ids of the collaborating authors
    * @return {Promise<HydratedDocument<SharedFreet>>} - The newly created freet
    */
-  static async addOne(authorId: Types.ObjectId | string, content: string, collaboratingAuthors: Array<Types.ObjectId | string>): Promise<HydratedDocument<SharedFreet>> {
+  static async addOne(authorId: Types.ObjectId | string, content: string, collaboratingAuthors: Array<Types.ObjectId | string>, collaboratingAuthorsRaw: string): Promise<HydratedDocument<SharedFreet>> {
     const date = new Date();
     const sharedFreet = new SharedFreetModel({
       authorId, dateCreated: date, content, dateModified: date,
-      comments: 0, likes: 0, reports: 0, collaboratingAuthors
+      comments: 0, likes: 0, reports: 0, collaboratingAuthors, collaboratingAuthorsUsernames: collaboratingAuthorsRaw
     });
     await sharedFreet.save(); // Saves freet to MongoDB
     return sharedFreet.populate("authorId");
@@ -81,6 +81,18 @@ class SharedFreetCollection {
    */
   static async findOne(sharedFreetId: Types.ObjectId | string): Promise<HydratedDocument<SharedFreet>> {
     return SharedFreetModel.findOne({_id: sharedFreetId}).populate("authorId");
+  }
+
+  static async getCollaboratingAuthors(sharedFreetId: Types.ObjectId | string): Promise<Array<string>> {
+    const freet = await SharedFreetModel.findOne({_id: sharedFreetId});
+    let collaboratingAuthorsUsernames = [];
+    for (let author of freet.collaboratingAuthors){
+      let user = await UserCollection.findOneByUserId(author._id);
+      if (user){
+        collaboratingAuthorsUsernames.push(user.username);
+      }
+    }
+    return collaboratingAuthorsUsernames;
   }
 
   /**

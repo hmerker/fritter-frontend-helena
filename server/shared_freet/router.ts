@@ -127,7 +127,7 @@ router.post(
         collaboratingAuthorsStr.push((currUserId._id).toString());
       }
     }
-    const freet = await SharedFreetCollection.addOne(userId, req.body.content, collaboratingAuthorsStr);
+    const freet = await SharedFreetCollection.addOne(userId, req.body.content, collaboratingAuthorsStr, req.body.collaboratingAuthors as string);
 
     res.status(201).json({
       message: "Your freet was created successfully.",
