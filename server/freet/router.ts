@@ -118,7 +118,7 @@ router.post(
   [userValidator.isUserLoggedIn, freetValidator.isValidFreetContent],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ""; // Will not be an empty string since its validated in isUserLoggedIn
-    const sourceRaw = req.body.source;
+    const sourceRaw = req.body.source as string;
     let source = "none";
     if (sourceRaw !== null && sourceRaw !== ""){
       source = sourceRaw;
