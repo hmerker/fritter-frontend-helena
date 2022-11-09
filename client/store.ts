@@ -31,15 +31,19 @@ const store = new Vuex.Store({
         Vue.delete(state.alerts, payload.message);
       }, 3000);
     },
+    setUserId(state, id) {
+      /**
+       * Update the stored userId to the specified one.
+       * @param id - new userId to set
+       */
+      state.userId = id;
+    },
     setUsername(state, username) {
       /**
        * Update the stored username to the specified one.
        * @param username - new username to set
        */
       state.username = username;
-    },
-    setUserId(state, id) {
-      state.userId = id;
     },
     updateFilter(state, filter) {
       /**

@@ -8,14 +8,14 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import * as userValidator from "../server/user/middleware";
 import {userRouter} from "../server/user/router";
+import {followerRouter} from "../server/follower/router";
 import {freetRouter} from "../server/freet/router";
 import {sharedFreetRouter} from "../server/shared_freet/router";
 import {commentRouter} from "../server/comment/router";
-import {communityScoreRouter} from "../server/community_score/router";
-import {credibilityCountRouter} from "../server/credibility_count/router";
 import {likeRouter} from "../server/like/router";
 import {reportRouter} from "../server/report/router";
-import {followerRouter} from "../server/follower/router";
+import {communityScoreRouter} from "../server/community_score/router";
+import {credibilityCountRouter} from "../server/credibility_count/router";
 import MongoStore from "connect-mongo";
 
 // Load environmental variables
@@ -78,14 +78,14 @@ app.use(userValidator.isCurrentSessionUserExists);
 
 // Add routers from routes folder
 app.use("/api/users", userRouter);
+app.use("/api/followers", followerRouter);
 app.use("/api/freets", freetRouter);
 app.use("/api/sharedFreets", sharedFreetRouter);
 app.use("/api/comments", commentRouter);
-app.use("/api/communityScores", communityScoreRouter);
-app.use("/api/credibilityCounts", credibilityCountRouter);
 app.use("/api/likes", likeRouter);
 app.use("/api/reports", reportRouter);
-app.use("/api/followers", followerRouter);
+app.use("/api/communityScores", communityScoreRouter);
+app.use("/api/credibilityCounts", credibilityCountRouter);
 
 // Catch all the other routes and display error message
 app.all("*", (req: Request, res: Response) => {

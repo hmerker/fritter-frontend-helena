@@ -7,7 +7,7 @@
       <div style="background-color: white; padding: 30px; border-radius: 8px">
       <RegisterForm />
       </div>
-      <h3 class="">
+      <h3>
         Already have a Fritter profile? &nbsp;
         <router-link to="/login">
           <button>Sign In</button>
@@ -21,7 +21,7 @@
 import RegisterForm from '@/components/Login/RegisterForm.vue';
 
 export default {
-  name: 'CreateAccount',
+  name: 'CreateAccountPage',
   components: {
     RegisterForm,
   },

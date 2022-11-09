@@ -6,8 +6,8 @@
     class="sharedFreet"
   >
     <header>
-      <router-link class="" :to="`/user?username=${sharedFreet.author}`">
-        <h3 class="">
+      <router-link :to="`/user?username=${sharedFreet.author}`">
+        <h3>
           @{{ sharedFreet.author }}
         </h3>
       </router-link>
@@ -27,7 +27,6 @@
     </p>
     <p class="info">
       Posted at {{ sharedFreet.dateModified }}
-      <i v-if="sharedFreet.edited">(edited)</i>
     </p>
     <div
       v-if="$store.state.username === sharedFreet.author && showIndividualSharedFreet"

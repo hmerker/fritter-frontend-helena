@@ -4,6 +4,11 @@
       <header>
         <h1>Explore</h1>
       </header>
+      <div style="margin-bottom: 20px">
+      <h4> To view another user's profile page in order to follow/unfollow them, click on their username at the top of one of their freets. </h4>
+      <h4> To view your own community score and credibility count, please click on your own username at the top right of the nav bar.</h4>
+      <h4> To view the comments for a freet, please select Show All Comments. </h4>
+      </div>
     </section>
     <section style ='background-color: white; padding: 30px; border-radius: 8px;'>
       <header>

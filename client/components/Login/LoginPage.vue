@@ -10,7 +10,7 @@
       <div style="background-color: white; padding: 30px; border-radius: 8px">
       <LoginForm />
       </div>
-      <h3 class="">
+      <h3>
         New to Fritter? &nbsp;
         <router-link to="/create">
           <button>Create Account</button>

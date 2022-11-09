@@ -4,13 +4,13 @@
       <header v-if="user">
         <h1> Profile Page: <b>@{{ this.user.username }}</b></h1>
       </header>
-      <h2 class="" v-if="user === null">
-        User does not exist with username '{{ this.$route.query.username }}'.
-      </h2>
+      <h3 v-if="user === null">
+        User does not exist with username {{ this.$route.query.username }}.
+      </h3>
       <section style = "margin-top: 30px; margin-bottom: 30px; background-color: white; padding: 30px; border-radius: 8px;" v-if="followerCounts">
-        <div class="">
-          <h3 class=""><b>Number of followers: &nbsp;</b> {{this.followerCounts.followers}}</h3>
-          <h3 class=""><b>Number of users following: &nbsp;</b> {{this.followerCounts.following}}</h3>
+        <div>
+          <h3><b>Number of followers: &nbsp;</b> {{this.followerCounts.followers}}</h3>
+          <h3><b>Number of users following: &nbsp;</b> {{this.followerCounts.following}}</h3>
         </div>
         <div style="padding-top: 20px">
         <button v-if="alreadyFollowing !== undefined" @click="followCallback">
@@ -72,14 +72,14 @@ export default {
           this.sharedFreets = res;
         });
 
-        fetch(`/api/followers/followerCounts?userId=${res.user._id}`, { method: "GET" }).then(res => res.json()).then((res) => {
-          this.followerCounts = res;
-        });
-
         fetch(`/api/followers/following?userId=${res.user._id}`, { method: "GET" }).then(res => res.json()).then((res) => {
           if (res) {
             this.alreadyFollowing = res.following;
           }
+        });
+
+        fetch(`/api/followers/followerCounts?userId=${res.user._id}`, { method: "GET" }).then(res => res.json()).then((res) => {
+          this.followerCounts = res;
         });
       } 
       else {
@@ -92,8 +92,8 @@ export default {
       if (this.alreadyFollowing) {
         fetch(`/api/followers/${this.user._id}`, { method: "DELETE" }).then(res => res.json()).then((res) => {
           if (res) {
-            this.alreadyFollowing = false;
             this.followerCounts.followers = this.followerCounts.followers - 1;
+            this.alreadyFollowing = false;
           } 
           else {
             this.$store.commit("alert", {message: "When attempting to unfollow this user, an error occurred.", status: "error"});
@@ -104,8 +104,8 @@ export default {
         const options = {body: JSON.stringify({userFollowed: this.user._id })};
         fetch(`/api/followers/`, {...options, method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin" }).then(res => res.json()).then((res) => {
           if (res) {
-            this.alreadyFollowing = true;
             this.followerCounts.followers = this.followerCounts.followers + 1;
+            this.alreadyFollowing = true;
           } 
           else {
             this.$store.commit("alert", {message: "When attempting to follow this user, an error occurred.", status: "error",});
@@ -119,8 +119,8 @@ export default {
       user: undefined,
       freets: undefined,
       sharedFreets: undefined,
-      alreadyFollowing: undefined,
       followerCounts: undefined,
+      alreadyFollowing: undefined,
     };
   },
 };

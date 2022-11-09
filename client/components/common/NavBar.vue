@@ -15,8 +15,24 @@
     <div class="right">
       <router-link
         v-if="$store.state.username"
+        to="/account"
+        class="a"
+        style="color: rgb(4,104,140)"
+      >
+        <b>@{{ $store.state.username }}</b>
+      </router-link>
+      <router-link
+        to="/"
+        class="a"
+        style="color: rgb(60,60,60)"
+      >
+        Home
+      </router-link>
+      <router-link
+        v-if="$store.state.username"
         to="/feed"
         class="a"
+        style="color: rgb(60,60,60)"
       >
         Feed
       </router-link>
@@ -24,21 +40,15 @@
         v-if="$store.state.username"
         to="/explore"
         class="a"
+        style="color: rgb(60,60,60)"
       >
         Explore
-      </router-link>
-      <router-link
-        v-if="$store.state.username"
-        to="/account"
-        class="a"
-      >
-        @{{ $store.state.username }}
       </router-link>
       <router-link
         v-if="!$store.state.username"
         to="/create"
         class="a"
-        style="color: rgb(96,96,96)"
+        style="color: rgb(60,60,60)"
       >
         Create Account
       </router-link>
@@ -46,7 +56,7 @@
         v-if="!$store.state.username"
         to="/login"
         class="a"
-        style="color: rgb(96,96,96)"
+        style="color: rgb(60,60,60)"
       >
         Sign In
       </router-link>
@@ -76,8 +86,8 @@ export default {
   methods: {
     logout() {
       fetch(`/api/users/session`, { method: "DELETE" }).then(res => res.json()).then(() => {
-        this.$store.commit("setUsername", null);
         this.$store.commit("setUserId", null);
+        this.$store.commit("setUsername", null);
         this.$store.commit("alert", {message: "You have successfully signed out of your account.", status: "success"});
         this.$router.push({name: "Home"});
       });
@@ -88,21 +98,21 @@ export default {
 
 <style scoped>
 nav {
-    padding: 1vw 2vw;
-    background-color: rgb(255, 255, 255);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
+  padding: 1vw 2vw;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
 }
 
 .title {
-    font-size: 32px;
-    margin: 0 5px;
+  font-size: 32px;
+  margin: 0 5px;
 }
 
 img {
-    height: 32px;
+  height: 32px;
 }
 
 .left {
@@ -111,19 +121,19 @@ img {
 }
 
 .right {
-    font-size: 20px;
-    display: grid;
-    gap: 16px;
-    grid-auto-flow: column;
-    align-items: center;
+  font-size: 20px;
+  display: grid;
+  gap: 16px;
+  grid-auto-flow: column;
+  align-items: center;
 }
 
 .right a {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 .alerts {
-    width: 25%;
+  width: 25%;
 }
 
 a:link {

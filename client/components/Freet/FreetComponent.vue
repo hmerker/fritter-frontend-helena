@@ -24,10 +24,9 @@
     >
       {{ freet.content }}
     </p>
-    <h5 v-if='freet.source'> <b>Source:</b> {{freet.source}}</h5>
-    <p class="info">
+    <h5 v-if='freet.source && freet.source !== "none"'> <b>Source:</b> {{freet.source}}</h5>
+    <p>
       Posted at {{ freet.dateModified }}
-      <i v-if="freet.edited">(edited)</i>
     </p>
     <div
       v-if="$store.state.username === freet.author && showIndividualFreet"
@@ -193,7 +192,7 @@ export default {
         setTimeout(() => this.$delete(this.alerts, error), 3000);
         return;
       }
-
+      
       const params = {
         method: 'PATCH',
         message: 'Successfully edited freet!',

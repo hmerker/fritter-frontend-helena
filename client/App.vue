@@ -18,8 +18,8 @@ export default {
     fetch('/api/users/session', {
       credentials: 'same-origin', // Sends express-session credentials with request
     }).then(res => res.json()).then(res => {
-      this.$store.commit('setUsername', res ? res.user.username : null);
       this.$store.commit('setUserId', res ? res.user._id : null);
+      this.$store.commit('setUsername', res ? res.user.username : null);
     });
 
     // Clear alerts on page refresh

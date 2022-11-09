@@ -10,7 +10,7 @@
       <div style = "margin-top: 30px; margin-bottom: 30px; background-color: white; padding: 30px; border-radius: 8px;">
       <h2>Community Score</h2>
       <p>
-        Each user has a community score, which quantifies the positivity of their freets, shared freets, and comments. A score that is higher than zero indicates overall positive content while a score that is lower than zero implies negativity. If your score is above zero, congratulations on making a positive impact on the Fritter community!
+        Each user has a community score, which quantifies the positivity of their freets. A score that is higher than zero indicates overall positive content while a score that is lower than zero implies negativity. If your score is above zero, congratulations on making a positive impact on the Fritter community!
       </p>
       <div
         v-if="communityScore || communityScore === 0"

@@ -1,23 +1,23 @@
 <template>
   <article style ='background-color: rgb(250, 250, 250); padding: 30px; border-radius: 8px; margin-top: 20px'>
     <span>
-      <router-link class="" :to="`/user?username=${comment.author}`">
-        <span class="">@{{ comment.author }}</span>
+      <router-link :to="`/user?username=${comment.author}`">
+        <span>@{{ comment.author }}</span>
       </router-link> 
       <p> {{ comment.content }} </p>
     </span>
-    <p class="">
+    <p>
       {{ comment.dateCreated }}
     </p>
-    <div v-if="$store.state.username === comment.author" class="">
+    <div v-if="$store.state.username === comment.author">
       <button @click="() => deleteCommentCallback(comment._id)"> 🗑️ Delete</button>
     </div>
     <section>
       <div style="padding-top:10px">
-        <img @click="like" src="../../public/like.svg" width="48px" height="48px" class=""/>
-        <span class="">{{ comment.likes }}</span>
-        <img @click="report" src="../../public/report.svg" width="48px" height="48px" class=""/>
-        <span class="">{{ comment.reports }}</span>
+        <img @click="like" src="../../public/like.svg" width="48px" height="48px"/>
+        <span>{{ comment.likes }}</span>
+        <img @click="report" src="../../public/report.svg" width="48px" height="48px"/>
+        <span>{{ comment.reports }}</span>
       </div>
     </section>
   </article>

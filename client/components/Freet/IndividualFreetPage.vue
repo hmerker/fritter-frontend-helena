@@ -30,7 +30,9 @@
           :comment="comment"
           :deleteCommentCallback="deleteCommentCallback"
         />
-        <h3 v-if="!comments?.length">There are no comments found.</h3>
+        <h4 v-if="!comments?.length || comments.length === 0">
+          There are no comments found.
+        </h4>
       </section>
     </section>
   </main>
@@ -50,7 +52,6 @@ export default {
   },
   mounted() {
     const {id} = this.$route.query;
-    const options = {};
     fetch(`/api/freets?freetId=${id}`, { method: "GET" }).then(res => res.json()).then((res) => {
       if (res){
         this.freet = res;
@@ -73,15 +74,15 @@ export default {
     deleteCommentCallback(commentId) {
       fetch(`/api/comments/${commentId}`, { method: "DELETE" }).then((res) => {
         if (res.ok) {
-          this.comments = this.comments.filter((comment) => comment._id !== commentId);
           this.freet.comments = this.freet.comments - 1;
+          this.comments = this.comments.filter((comment) => comment._id !== commentId);
           this.$store.commit('refreshComments');
         }
       });
     },
     createCommentCallback(comment) {
-      this.comments.unshift(comment);
       this.freet.comments = this.freet.comments + 1;
+      this.comments.unshift(comment);
       this.$store.commit('alert', {message: 'You sucessfully created a comment.', status: 'success'});
       fetch(`/api/comments?parentContentId=${this.$store.state.filter}`, { method: "GET" }).then(res => res.json()).then((res) => {
         if (res){
