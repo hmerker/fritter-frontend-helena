@@ -11,7 +11,7 @@
           <h2>Explore content and find new users to follow! </h2>
         </div>
       </header>
-      <h3> Freets </h3>
+      <h3 style="margin-top: 30px"> Freets </h3>
       <section v-if="$store.state.freetsForExplore.length">
         <FreetComponent
           v-for="freet in $store.state.freetsForExplore"
@@ -30,7 +30,7 @@
           </router-link>
         </h3>
       </article>
-      <h3> Shared Freets </h3>
+      <h3 style="margin-top: 50px"> Shared Freets </h3>
       <section v-if="$store.state.sharedFreetsForExplore.length">
         <SharedFreetComponent
           v-for="sharedFreet in $store.state.sharedFreetsForExplore"

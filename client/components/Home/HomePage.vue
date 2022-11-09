@@ -6,6 +6,11 @@
       <header>
         <h1 class="header w3-main w3-content" style="font-weight: bold; margin-top: 100px">Welcome to Fritter!</h1>
       </header>
+      <div class="center">
+        <img src="../../public/green_birdy.svg" width="32px" height="32px"/>
+        &nbsp;
+        <img src="../../public/red_birdy.svg" width="32px" height="32px"/>
+      </div>
       <div class="w3-main w3-content" style="max-width:1600px;margin-top:55px">
         <h3 v-if="!$store.state.username">
           <router-link to="/login">
@@ -19,12 +24,12 @@
       </div>
     </section>
     <section>
-      <h3 class="w3-main w3-content" style = "text-align: center; margin-top: 50px; margin-bottom: 50px">
+      <h3 class="w3-main w3-content" style = "text-align: center; margin-top: 10px; margin-bottom: 50px">
         Fritter provides a platform where anyone can create any type of content that resonates with them. Start drafting and publishing your thoughts and ideas now!
       </h3>
     </section>
     <section style ='background-color: white; padding: 30px; border-radius: 8px;'>
-      <h3> Freets </h3>
+      <h2> Freets </h2>
       <header>
         <div class="left">
           <h2>
@@ -57,8 +62,8 @@
         <h3>No freets found.</h3>
       </article>
     </section>
-    <section style ='background-color: white; padding: 30px; border-radius: 8px;'>
-      <h3> Shared Freets </h3>
+    <section style ='background-color: white; padding: 30px; border-radius: 8px; margin-top: 30px'>
+      <h2> Shared Freets </h2>
       <header>
         <div class="left">
           <h2>
@@ -129,5 +134,10 @@ section .scrollbox {
   flex: 1 0 50vh;
   padding: 3%;
   overflow-y: scroll;
+}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

@@ -18,12 +18,11 @@ class ReportCollection {
    * @param {string} userId - user id
    * @param {string} parentContentId - parent content id
    * @param {string} parentContentType - parent content type
-   * @param {string} content - content 
    * @return {Promise<HydratedDocument<Report>>} - new report
    */
-  static async addOne(userId: Types.ObjectId | string, parentContentId: Types.ObjectId | string, parentContentType: "freet" | "comment" | "shared_freet", content: string
+  static async addOne(userId: Types.ObjectId | string, parentContentId: Types.ObjectId | string, parentContentType: "freet" | "comment" | "shared_freet"
   ): Promise<HydratedDocument<Report>> {
-    const report = new ReportModel({userId, parentContentId, parentContentType, content});
+    const report = new ReportModel({userId, parentContentId, parentContentType});
     if (parentContentType === "freet"){
       FreetCollection.updateCounts(parentContentId, "reports", 1);
     }

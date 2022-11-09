@@ -2,22 +2,24 @@
   <main>
     <section>
       <header v-if="user">
-        <h1> Profile Page for @{{ this.user.username }}</h1>
+        <h1> Profile Page: <b>@{{ this.user.username }}</b></h1>
       </header>
       <h2 class="" v-if="user === null">
         User does not exist with username '{{ this.$route.query.username }}'.
       </h2>
-      <section v-if="followerCounts">
+      <section style = "margin-top: 30px; margin-bottom: 30px; background-color: white; padding: 30px; border-radius: 8px;" v-if="followerCounts">
         <div class="">
-          <h3 class="">Number of followers: {{this.followerCounts.followers}}</h3>
-          <h3 class="">Number of users following: {{this.followerCounts.following}}</h3>
+          <h3 class=""><b>Number of followers: &nbsp;</b> {{this.followerCounts.followers}}</h3>
+          <h3 class=""><b>Number of users following: &nbsp;</b> {{this.followerCounts.following}}</h3>
         </div>
+        <div style="padding-top: 20px">
         <button v-if="alreadyFollowing !== undefined" @click="followCallback">
           {{ !this.alreadyFollowing ? "Follow" : "Unfollow" }}
         </button>
+        </div>
       </section>
-      <hr v-if="user" />
-      <h2 v-if="user">Freets with @{{ user.username }} as an author.</h2>
+      <div style = "margin-top: 30px; margin-bottom: 30px; background-color: white; padding: 30px; border-radius: 8px;">
+      <h2 v-if="user">Freets with @{{ user.username }} as the author.</h2>
       <section v-if="freets">
         <FreetComponent
           v-for="freet in freets"
@@ -25,17 +27,30 @@
           :freet="freet"
         />
       </section>
+      </div>
+      <div style = "margin-top: 30px; margin-bottom: 30px; background-color: white; padding: 30px; border-radius: 8px;">
+      <h2 v-if="user">Shared Freets with @{{ user.username }} as an author.</h2>
+      <section v-if="sharedFreets">
+        <SharedFreetComponent
+          v-for="sharedFreet in sharedFreets"
+          :key="sharedFreet.id"
+          :sharedFreet="sharedFreet"
+        />
+      </section>
+      </div>
     </section>
   </main>
 </template>
 
 <script>
 import FreetComponent from "@/components/Freet/FreetComponent.vue";
+import SharedFreetComponent from "@/components/SharedFreet/SharedFreetComponent.vue";
 
 export default {
   name: "ProfilePage",
   components: {
     FreetComponent,
+    SharedFreetComponent,
   },
   mounted() {
     const {username} = this.$route.query;
@@ -51,6 +66,10 @@ export default {
         
         fetch(`/api/freets?author=${username}`, { method: "GET" }).then(res => res.json()).then((res) => {
           this.freets = res;
+        });
+
+        fetch(`/api/sharedFreets?author=${username}`, { method: "GET" }).then(res => res.json()).then((res) => {
+          this.sharedFreets = res;
         });
 
         fetch(`/api/followers/followerCounts?userId=${res.user._id}`, { method: "GET" }).then(res => res.json()).then((res) => {
@@ -99,6 +118,7 @@ export default {
     return {
       user: undefined,
       freets: undefined,
+      sharedFreets: undefined,
       alreadyFollowing: undefined,
       followerCounts: undefined,
     };

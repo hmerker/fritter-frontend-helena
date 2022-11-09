@@ -9,7 +9,7 @@
       <CreateFreetForm />
       <CreateSharedFreetForm />
     </section>
-    <section style ='background-color: white; padding: 30px; border-radius: 8px;' v-if="$store.state.username">
+    <section style ='background-color: white; padding: 30px; border-radius: 8px; margin-top: 15px;' v-if="$store.state.username">
       <header>
         <div class="left">
           <h2>
@@ -52,7 +52,7 @@
         </h3>
       </article>
     </section>
-    <section style ='background-color: white; padding: 30px; border-radius: 8px;' v-if="$store.state.username">
+    <section style ='background-color: white; padding: 30px; border-radius: 8px; margin-top: 30px;' v-if="$store.state.username">
       <header>
         <div class="left">
           <h2>

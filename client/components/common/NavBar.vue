@@ -32,7 +32,7 @@
         to="/account"
         class="a"
       >
-        {{ $store.state.username }}
+        @{{ $store.state.username }}
       </router-link>
       <router-link
         v-if="!$store.state.username"

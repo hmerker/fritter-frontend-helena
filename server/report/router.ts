@@ -32,7 +32,7 @@ router.get(
 router.post(
   "/",
   [
-    userValidator.isUserLoggedIn, reportValidator.isParamsGiven("body"), reportValidator.isParamsIdValid("body"), reportValidator.isValidContent,
+    userValidator.isUserLoggedIn, reportValidator.isParamsGiven("body"), reportValidator.isParamsIdValid("body"),
     reportValidator.isParentContentTypeValid(), reportValidator.doesParentContentExist("body"),
 
   ],
@@ -55,7 +55,7 @@ router.post(
       reportResult = await ReportCollection.deleteOne(userId, parentContentId as string);
     }
     else{
-      reportResult = await ReportCollection.addOne(userId, parentContentId, parentContentType, content);
+      reportResult = await ReportCollection.addOne(userId, parentContentId, parentContentType);
     }
 
     if (reportResult) {

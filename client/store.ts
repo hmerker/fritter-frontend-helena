@@ -81,10 +81,19 @@ const store = new Vuex.Store({
       const url = state.filter ? `/api/sharedFreets?author=${state.filter}` : '/api/sharedFreets';
       const res = await fetch(url).then(async r => r.json());
       state.sharedFreets = res;
-      
-      const url_feed = state.filter ? `/api/sharedFreets?author=${state.filter}` : '/api/sharedFreets/feed';
-      const res_feed = await fetch(url_feed).then(async r => r.json());
-      state.sharedFreetsForFeed = res_feed;
+
+      if (state.filter){
+        const url_feed = `/api/sharedFreets?author=${state.filter}`;
+        const res_feed = await fetch(url_feed).then(async r => r.json());
+        state.sharedFreetsForFeed = res_feed;
+      }
+      else{
+        const url_feed_1 = `/api/sharedFreets?author=${state.username}`;
+        const res_feed_1 = await fetch(url_feed_1).then(async r => r.json());
+        const url_feed_2 = '/api/sharedFreets/feed';
+        const res_feed_2 = await fetch(url_feed_2).then(async r => r.json());
+        state.sharedFreetsForFeed = [...res_feed_1, ...res_feed_2];
+      }
       
       const url_explore = '/api/sharedFreets/explore';
       const res_explore = await fetch(url_explore).then(async r => r.json());

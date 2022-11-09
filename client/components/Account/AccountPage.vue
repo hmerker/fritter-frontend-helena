@@ -5,8 +5,9 @@
   <main>
     <section>
       <header>
-        <h1 class="">Account information for @{{ $store.state.username }}</h1>
+        <h1 class="">Account Information: <b>@{{ $store.state.username }}</b></h1>
       </header>
+      <div style = "margin-top: 30px; margin-bottom: 30px; background-color: white; padding: 30px; border-radius: 8px;">
       <h2>Community Score</h2>
       <p>
         Each user has a community score, which quantifies the positivity of their freets, shared freets, and comments. A score that is higher than zero indicates overall positive content while a score that is lower than zero implies negativity. If your score is above zero, congratulations on making a positive impact on the Fritter community!
@@ -14,35 +15,40 @@
       <div
         v-if="communityScore || communityScore === 0"
       >
-        {{Number.parseFloat(this.communityScore + 1.25).toFixed(2)}}
+        <h4>Score: &nbsp;{{Number.parseFloat(this.communityScore).toFixed(2)}}</h4>
       </div>
+      </div>
+      <div style = "margin-top: 30px; margin-bottom: 30px; background-color: white; padding: 30px; border-radius: 8px;">
       <h2>Credibility Count</h2>
       <p>
-        Each user also has a credibility count, which keeps track of the number of sources they add to their freets. Fritter aims to decrease misinformation, so thanks if you have added any sources!
+        Each user also has a credibility count, which keeps track of the number of sources that they have added to their freets. Fritter aims to decrease misinformation, so thanks for adding sources!
       </p>
       <div
         v-if="credibilityCount || credibilityCount === 0"
       >
-        {{Number.parseFloat(this.credibilityCount).toFixed(0)}}
+        <h4>Count: &nbsp;{{Number.parseFloat(this.credibilityCount).toFixed(0)}}</h4>
       </div>
+      </div>
+      <div style = "margin-top: 30px; margin-bottom: 30px; background-color: white; padding: 30px; border-radius: 8px;">
       <section v-if="followerCounts">
         <h2>Followers and Following Totals</h2>
-        <div class="">
-          <h3 class="">Number of followers: {{this.followerCounts.followers}}</h3>
-          <h3 class="">Number of users following: {{this.followerCounts.following}}</h3>
+        <div style="padding-top: 3px;">
+          <h4 class="">Number of followers: &nbsp; {{this.followerCounts.followers}}</h4>
+          <h4 class="">Number of users following: &nbsp; {{this.followerCounts.following}}</h4>
         </div>
       </section>
+      </div>
     </section>
     <section>
       <header>
-        <h2>Account settings</h2>
+        <h2>Account Settings</h2>
       </header>
       <ChangeUsernameForm />
       <ChangePasswordForm />
     </section>
-    <section>
+    <section style="margin-top: 30px">
       <header>
-        <h2>Account management</h2>
+        <h2>Account Management</h2>
       </header>
       <DeleteAccountForm />
     </section>
